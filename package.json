@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "seed": "node database/seed.js",
-    "test": "node test/system.test.js",
-    "postinstall": "node -e \"const fs=require('fs'),p=require('path').join('node_modules','better-sqlite3','prebuilds');if(fs.existsSync(p))fs.rmSync(p,{recursive:true,force:true});\" && npm rebuild better-sqlite3 --build-from-source"
+    "test": "node test/system.test.js"
   },
   "keywords": [
     "ruqyah",
