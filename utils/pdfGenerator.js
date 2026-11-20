@@ -1,6 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp');
+let sharp;
+try {
+  sharp = require('sharp');
+} catch (e) {
+  console.warn('sharp library not available:', e.message);
+}
 const db = require('../database/db');
 
 // Load clinic logo dynamically from settings or default official logo
