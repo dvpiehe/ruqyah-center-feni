@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "seed": "node database/seed.js",
-    "test": "node test/system.test.js"
+    "test": "node test/system.test.js",
+    "postinstall": "npm rebuild better-sqlite3 --build-from-source"
   },
   "keywords": [
     "ruqyah",
