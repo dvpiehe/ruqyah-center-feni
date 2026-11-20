@@ -1,0 +1,31 @@
+{
+  "name": "ruqyah-center-feni",
+  "version": "1.0.0",
+  "description": "Ruqyah Support & Cupping Center (Feni Branch) - Web Application, Online Appointment Booking & Patient CRM",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node database/seed.js",
+    "test": "node test/system.test.js"
+  },
+  "keywords": [
+    "ruqyah",
+    "hijama",
+    "cupping",
+    "clinic",
+    "appointment-booking",
+    "patient-crm",
+    "feni",
+    "bangladesh"
+  ],
+  "author": "Ruqyah Support & Cupping Center",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

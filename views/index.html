@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="site_title">রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা</title>
+  <meta name="description" content="কুরআন ও সহীহ সুন্নাহ ভিত্তিক নির্ভরযোগ্য রুকইয়াহ ও হিজামা সেন্টার। মহিপাল, ফেনী। রাক্বী মুহাম্মদুল্লাহ মিয়াহ।">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <style>
+    .lang-switcher-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #FFFFFF;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .lang-switcher-btn.active {
+      background: rgba(255, 255, 255, 0.25);
+      font-weight: 700;
+      border-color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VERY TOP: Official Prominent Branch Name & Branding Showcase -->
+  <div class="top-branch-brand-showcase" style="background: linear-gradient(135deg, #022C22 0%, #064E3B 50%, #022C22 100%); border-bottom: 3px solid #D97706; padding: 1.25rem 1rem; text-align: center; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.35);">
+    <div class="container">
+      <div style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center;">
+        <h1 style="font-family: 'Cinzel', 'Playfair Display', 'Georgia', 'Segoe UI', serif; font-size: clamp(1.4rem, 4.2vw, 2.5rem); font-weight: 900; color: #FFFFFF; letter-spacing: 2.5px; text-transform: uppercase; margin: 0; line-height: 1.2; text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);">
+          RUQYAH SUPPORT &amp; CUPPING CENTER
+        </h1>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 0.5rem; width: 100%;">
+          <span style="height: 2px; flex: 1; max-width: 100px; background: linear-gradient(90deg, transparent, #FDE047);"></span>
+          <span style="font-family: 'Cinzel', 'Playfair Display', 'Georgia', sans-serif; font-size: clamp(1.1rem, 2.8vw, 1.65rem); font-weight: 900; letter-spacing: 6px; color: #FDE047; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5); padding: 0.2rem 1rem; border: 1.5px solid rgba(253, 224, 71, 0.6); border-radius: 4px; background: rgba(0, 0, 0, 0.3);">
+            FENI BRANCH
+          </span>
+          <span style="height: 2px; flex: 1; max-width: 100px; background: linear-gradient(90deg, #FDE047, transparent);"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div>
+        <span data-i18n="topbar_address">📍 ভুঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী</span>
+        <span style="margin-left: 1.5rem;" data-i18n="topbar_phone">📞 ০১৭৫৮-৩৫৪৯২০</span>
+      </div>
+      <div class="top-bar-links" style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" data-i18n="topbar_whatsapp">হোয়াটসঅ্যাপ সহায়তা</a>
+        <a href="/lookup" data-i18n="topbar_lookup">বুকিং স্ট্যাটাস দেখুন</a>
+        <a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন প্যানেল</a>
+        <!-- Language Switcher in Top Bar -->
+        <div style="display: inline-flex; align-items: center; gap: 4px; margin-left: 0.5rem; background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 4px;">
+          <button type="button" class="lang-switcher-btn lang-btn-bn active" onclick="setLanguage('bn')">বাংলা</button>
+          <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">|</span>
+          <button type="button" class="lang-switcher-btn lang-btn-en" onclick="setLanguage('en')">English</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header & Navigation -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand-logo">
+        <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center Logo" style="height: 52px; width: auto; object-fit: contain;">
+      </a>
+      <button class="mobile-toggle" aria-label="Toggle Navigation">☰</button>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="/" class="nav-link active" data-i18n="nav_home">হোম</a></li>
+          <li><a href="/about" class="nav-link" data-i18n="nav_about">আমাদের সম্পর্কে</a></li>
+          <li><a href="/services" class="nav-link" data-i18n="nav_services">সেবাসমূহ ও খরচ</a></li>
+          <li><a href="/articles" class="nav-link" data-i18n="nav_articles">কেস হিস্ট্রি ও আর্টিকেল</a></li>
+          <li><a href="/policies" class="nav-link" data-i18n="nav_policies">নিয়ম ও নীতিমালা</a></li>
+          <li><a href="/contact" class="nav-link" data-i18n="nav_contact">যোগাযোগ ও অবস্থান</a></li>
+          <li><a href="/lookup" class="nav-link" data-i18n="nav_lookup">বুকিং যাচাই</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+        <a href="/book" class="btn btn-primary" data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</a>
+        <div style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-light); padding: 3px 6px; border-radius: 4px;">
+          <button type="button" class="lang-btn-bn active" onclick="setLanguage('bn')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--primary);">বাং</button>
+          <span style="color: var(--text-muted); font-size: 0.75rem;">|</span>
+          <button type="button" class="lang-btn-en" onclick="setLanguage('en')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted);">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-grid">
+      <div>
+        <span class="badge badge-gold" style="margin-bottom: 1.25rem; font-size: 0.85rem; padding: 0.35rem 1rem;" data-i18n="hero_bismillah">
+          বিসমিল্লাহির রাহমানির রাহিম • ফেনী শাখা
+        </span>
+        <h1 class="hero-headline" data-i18n="hero_headline">
+          শরীয়াহ সম্মত নির্ভরযোগ্য রুকইয়াহ সেবা খুঁজছেন?
+        </h1>
+        <p class="hero-subheadline" data-i18n="hero_subheadline">
+          কুরআন ও সহীহ সুন্নাহর আলোকে রুকইয়াহ শারঈয়্যাহ ও সুন্নাতী হিজামা কাপিং থেরাপি। অভিজ্ঞ রাক্বী মুহাম্মদুল্লাহ মিয়ার তত্ত্বাবধানে সম্পূর্ণ ব্যক্তিগত, নিরাপদ ও স্বাস্থ্যসম্মত পরিবেশ।
+        </p>
+
+        <div class="hero-highlights">
+          <div class="hero-highlight-item" data-i18n="hero_badge1">
+            ✓ ১০০% কুরআন ও সহীহ সুন্নাহ ভিত্তিক
+          </div>
+          <div class="hero-highlight-item" data-i18n="hero_badge2">
+            ✓ ১ ঘণ্টার নির্ধারিত প্রাইভেট স্লট
+          </div>
+          <div class="hero-highlight-item" data-i18n="hero_badge3">
+            ✓ পুরুষ ও মহিলা আলাদা থেরাপিস্ট
+          </div>
+          <div class="hero-highlight-item" data-i18n="hero_badge4">
+            ✓ তাবিজ, শিরক ও কুসংস্কারমুক্ত
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="/book" class="btn btn-accent btn-lg" data-i18n="hero_cta_book">
+            🗓 অনলাইনে অ্যাপয়েন্টমেন্ট নিন
+          </a>
+          <a href="https://wa.me/8801758354920?text=Assalamu%20Alaikum.%20I%20would%20like%20to%20inquire%20about%20Ruqyah%20and%20Cupping%20services%20in%20Feni." 
+             target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-lg" data-i18n="hero_cta_wa">
+            💬 হোয়াটসঅ্যাপে পরামর্শ নিন
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Clinic Badge Card -->
+      <div class="hero-card">
+        <span class="badge badge-primary" style="margin-bottom: 0.75rem;" data-i18n="schedule_card_badge">ক্লিনিক নোটিশ ও সময়সূচী</span>
+        <h3 style="font-size: 1.35rem; margin-bottom: 0.75rem; color: var(--primary);" data-i18n="schedule_card_title">
+          পরামর্শ ও সেবার সময়সূচী
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-body); margin-bottom: 1.25rem;">
+          <span data-i18n="schedule_card_days">শনিবার থেকে বৃহস্পতিবার: সকাল ০৯:০০ – রাত ০৮:০০</span><br>
+          <span style="color: var(--accent-gold); font-weight: 600;" data-i18n="schedule_card_break">দৈনিক বিরতি: দুপুর ০১:০০ – ০২:০০ (যোহর ও মধ্যাহ্নভোজ)</span><br>
+          <span data-i18n="schedule_card_friday">শুক্রবার: সাধারণ বুকিং বন্ধ / পূর্ব অনুমতি সাপেক্ষে বিশেষ কেস</span>
+        </p>
+        
+        <div style="border-top: 1px solid var(--border-light); padding-top: 1rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="schedule_card_raqi_title">প্রধান রাক্বী ও তিব্বে নববী গবেষক:</div>
+          <strong style="color: var(--text-main); font-size: 1.05rem;" data-i18n="lead_raqi">মুহাম্মদুল্লাহ মিয়াহ</strong>
+          <div style="font-size: 0.8rem; color: var(--primary);" data-i18n="lead_raqi_title">কনসালট্যান্ট রাক্বী ও সুন্নাহ মেডিসিন প্র্যাকটিশনার</div>
+        </div>
+
+        <a href="/book" class="btn btn-primary" style="width: 100%;" data-i18n="schedule_check_btn">
+          আজকের খালি স্লট দেখুন
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Introduction to Ruqyah Shariah -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag" data-i18n="intro_tag">সহীহ তিব্বে নববী</div>
+        <h2 class="section-title" data-i18n="intro_title">রুকইয়াহ শারঈয়্যাহ কী ও কেন?</h2>
+        <p class="section-description" data-i18n="intro_desc">
+          পবিত্র কুরআনুল কারীমের নির্দিষ্ট আয়াত ও রাসূলুল্লাহ (সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম) থেকে বর্ণিত সহীহ দোয়াসমূহের মাধ্যমে মহান আল্লাহর কাছে শেফা প্রার্থনা করার নামই রুকইয়াহ।
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+        <div class="card" style="border-top: 4px solid var(--primary-light);">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">📖</div>
+          <h3 class="card-title" data-i18n="intro_c1_title">কুরআনের আয়াত দ্বারা ঝাড়ফুঁক</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="intro_c1_desc">
+            সূরা আল-ফাতিহা, আয়াতুল কুরসী, সূরা আল-বাকারাহ ও মুআউওয়াযাতাইনসহ সুন্নাহ বর্ণিত দোয়ার মাধ্যমে চিকিৎসা প্রদান করা হয়।
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--primary-light);">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛡️</div>
+          <h3 class="card-title" data-i18n="intro_c2_title">শিরক ও বিদআত মুক্ত পূর্ণ তাওহীদ</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="intro_c2_desc">
+            আমরা কোনো প্রকার তাবিজ, কবচ, কুফরি কালাম বা গণকগিরি সম্পূর্ণ প্রত্যাখ্যান করি। আমাদের চিকিৎসা নিখাদ তাওহীদের ওপর প্রতিষ্ঠিত।
+          </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--primary-light);">
+          <div style="font-size: 2rem; margin-bottom: 0.75rem;">🤲</div>
+          <h3 class="card-title" data-i18n="intro_c3_title">শেফা দানকারী একমাত্র আল্লাহ (আশ-শাফী)</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;" data-i18n="intro_c3_desc">
+            রুকইয়াহ কেবল একটি শরয়ী ও আত্মিক উপায় (সবব)। কোনো মানুষ বা রাক্বী নিজে শেফা দেওয়ার ক্ষমতা রাখে না। আরোগ্য আসে একমাত্র আল্লাহর পক্ষ থেকে।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Services Section -->
+  <section class="section section-muted">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag" data-i18n="services_tag">আমাদের প্রধান সেবাসমূহ</div>
+        <h2 class="section-title" data-i18n="services_title">রুকইয়াহ ও হিজামা সেবাসমূহ</h2>
+        <p class="section-description">
+          পবিত্র কুরআন ও সহীহ সুন্নাহর নির্দেশিত চিকিৎসা পদ্ধতি। সম্পূর্ণ ব্যক্তিগত, নিরাপদ এবং স্বাস্থ্যসম্মত পরিবেশে প্রদত্ত সেবা।
+        </p>
+      </div>
+
+      <div class="service-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+        <!-- Service 1: Ruqyah -->
+        <div class="card service-card" style="border-top: 4px solid var(--primary);">
+          <div>
+            <span class="badge badge-primary" style="margin-bottom: 0.75rem;" data-i18n="service_ruqyah_badge">নির্ধারিত ফি: ২,০৫০ টাকা</span>
+            <h3 class="card-title" data-i18n="service_ruqyah_title">রুকইয়াহ</h3>
+            <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;" data-i18n="service_ruqyah_desc">
+              রুকইয়াহ ডায়াগনোসিস, কনসালটেন্ট ফি এবং প্রাথমিক ট্রিটমেন্টসহ: ২,০৫০ টাকা
+            </p>
+            <ul style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+              <li>পূর্ণ ১ ঘণ্টার নিভৃত ও নির্ধারিত প্রাইভেট স্লট</li>
+              <li>কুরআনুল কারীমের নির্দিষ্ট আয়াত ও সহীহ দোয়ার মাধ্যমে চিকিৎসা</li>
+              <li>অভিজ্ঞ রাক্বী মুহাম্মদুল্লাহ মিয়াহর প্রত্যক্ষ তত্ত্বাবধান</li>
+              <li>শিরক, কুফর ও কুসংস্কারমুক্ত নিখাদ সুন্নাহ পদ্ধতি</li>
+            </ul>
+          </div>
+          <div>
+            <div class="service-price-tag">
+              <span class="service-price" data-i18n="service_ruqyah_fee">২,০৫০ টাকা</span>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">/ ১ ঘণ্টার সেশন</span>
+            </div>
+            <a href="/book?service=ruqyah" class="btn btn-primary" style="width: 100%;" data-i18n="hero_cta_book">
+              অনলাইনে অ্যাপয়েন্টমেন্ট নিন
+            </a>
+          </div>
+        </div>
+
+        <!-- Service 2: Hijama -->
+        <div class="card service-card" style="border-top: 4px solid var(--accent-gold);">
+          <div>
+            <span class="badge badge-gold" style="margin-bottom: 0.75rem;" data-i18n="service_hijama_badge">পরামর্শ ভিত্তিক ফি</span>
+            <h3 class="card-title" data-i18n="service_hijama_title">হিজামা</h3>
+            <p style="color: var(--text-body); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;" data-i18n="service_hijama_desc">
+              খরচ পরামর্শের মাধ্যমে নির্ধারণ করা হবে।
+            </p>
+            <ul style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+              <li>সুন্নাহ পয়েন্ট অনুযায়ী নিরাপদ রক্তমোক্ষণ ও কাপিং থেরাপি</li>
+              <li>পুরুষদের জন্য পৃথক ও নারীদের জন্য সম্পূর্ণ পর্দাযুক্ত কক্ষ</li>
+              <li>১০০% জীবাণুমুক্ত ওয়ান-টাইম ডিসপোজেবল কাপ ও সার্জিক্যাল ব্লেড</li>
+              <li>শারীরিক সমস্যা ও পয়েন্ট অনুযায়ী খরচ পরামর্শের মাধ্যমে নির্ধারণ</li>
+            </ul>
+          </div>
+          <div>
+            <div class="service-price-tag">
+              <span class="service-price" style="font-size: 1.15rem; color: #92400E;" data-i18n="service_hijama_fee">পরামর্শের মাধ্যমে নির্ধারণ করা হবে</span>
+            </div>
+            <a href="/book?service=hijama" class="btn btn-accent" style="width: 100%;" data-i18n="nav_book_btn">
+              হিজামা অ্যাপয়েন্টমেন্ট নিন
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="/services" class="btn btn-outline-primary btn-lg" data-i18n="nav_services">সেবাসমূহ ও বিস্তারিত নিয়মাবলী দেখুন →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Our Center? -->
+  <section class="section">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;" class="hero-grid">
+        <div>
+          <div class="section-tag" data-i18n="why_tag">সততা ও আন্তরিকতা</div>
+          <h2 style="font-size: 2.25rem; margin-bottom: 1.25rem;" data-i18n="why_title">কেন আমাদের সেন্টারে আসবেন?</h2>
+          <p style="color: var(--text-body); font-size: 1.05rem; margin-bottom: 1.5rem;" data-i18n="why_desc">
+            ভণ্ড কবিরাজ ও শিরকি চিকিৎসার বিপরীতে কুরআন ও সুন্নাহর বিশুদ্ধ আলোকবর্তিকা হিসেবে আমাদের এই কেন্দ্র পরিচালিত।
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; gap: 1rem;">
+              <div style="font-size: 1.5rem; color: var(--primary);">✓</div>
+              <div>
+                <strong style="font-size: 1.05rem; color: var(--text-main);" data-i18n="why_p1_title">অভিজ্ঞ ও আস্থাশীল রাক্বী</strong>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0.25rem 0 0;" data-i18n="why_p1_desc">
+                  সুন্নাহ চিকিৎসায় দীর্ঘ অভিজ্ঞতা এবং গভীর শরয়ী জ্ঞানসম্পন্ন রাক্বী মুহাম্মদুল্লাহ মিয়াহর প্রত্যক্ষ তত্ত্বাবধান।
+                </p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <div style="font-size: 1.5rem; color: var(--primary);">✓</div>
+              <div>
+                <strong style="font-size: 1.05rem; color: var(--text-main);" data-i18n="why_p2_title">সম্পূর্ণ গোপনীয়তা ও ১ ঘণ্টার আলাদা সময়</strong>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0.25rem 0 0;" data-i18n="why_p2_desc">
+                  প্রতিজন রোগী ও পরিবারকে ১ ঘণ্টার নির্ধারিত নিভৃত সময় দেওয়া হয় যাতে খোলামেলা আলোচনা ও চিকিৎসা সম্ভব হয়।
+                </p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <div style="font-size: 1.5rem; color: var(--primary);">✓</div>
+              <div>
+                <strong style="font-size: 1.05rem; color: var(--text-main);" data-i18n="why_p3_title">হাসপাতাল মানের পরিষ্কার-পরিচ্ছন্নতা</strong>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0.25rem 0 0;" data-i18n="why_p3_desc">
+                  হিজামার ক্ষেত্রে সর্বোচ্চ স্বাস্থ্যবিধি ও ওয়ান-টাইম সরঞ্জাম নিশ্চিত করা হয়।
+                </p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <div style="font-size: 1.5rem; color: var(--primary);">✓</div>
+              <div>
+                <strong style="font-size: 1.05rem; color: var(--text-main);" data-i18n="why_p4_title">ভুয়া ও বিভ্রান্তিকর গ্যারান্টিমুক্ত</strong>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0.25rem 0 0;" data-i18n="why_p4_desc">
+                  আমরা কোনো কুসংস্কার বা অবৈজ্ঞানিক দাবি করি না; আল্লাহর ওপর পূর্ণ ভরসা রেখে খাঁটি সুন্নাত অনুযায়ী সেবা দিই।
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- Guidance / Preparation Callout -->
+          <div class="card" style="background-color: var(--primary-subtle); border: 2px solid var(--primary-border); padding: 2.25rem;">
+            <h3 style="color: var(--primary); margin-bottom: 1rem;" data-i18n="guidance_title">
+              📋 সাক্ষাতের পূর্বে রোগীর প্রস্তুতি ও করণীয়
+            </h3>
+            <p style="font-size: 0.95rem; color: var(--text-body); margin-bottom: 1.25rem;" data-i18n="guidance_p">
+              রুকইয়াহ ও হিজামার সর্বোচ্চ বরকত ও শেফা লাভের জন্য নিচের সুন্নাতসমূহ মেনে চলুন:
+            </p>
+            <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: var(--text-body); line-height: 1.8;">
+              <li data-i18n="guidance_1">খাঁটি তাওবাহ ও আল্লাহর ওপর পূর্ণ তাওয়াক্কুল রাখা।</li>
+              <li data-i18n="guidance_2">সাক্ষাতের পূর্বে অযু করে পবিত্র অবস্থায় আসা।</li>
+              <li data-i18n="guidance_3">শরীরে বা ঘরে থাকা সব ধরনের তাবিজ-কবচ খুলে নিয়ে আসা (যা সুন্নাহ অনুযায়ী ধ্বংস করা হবে)।</li>
+              <li data-i18n="guidance_4">শালীন ও ঢিলেঢালা পোশাক পরিধান করা।</li>
+              <li data-i18n="guidance_5">নারী রোগীদের ক্ষেত্রে প্রাপ্তবয়স্ক মাহরাম (স্বামী, পিতা, ভাই বা ছেলে) থাকা বাধ্যতামূলক।</li>
+              <li data-i18n="guidance_6">পূর্ববর্তী যেকোনো ডাক্তারি রিপোর্ট ও প্রেসক্রিপশন সাথে আনা।</li>
+            </ul>
+
+            <div style="margin-top: 1.75rem;">
+              <a href="/policies" class="btn btn-primary" style="width: 100%;" data-i18n="guidance_btn">সম্পূর্ণ নিয়মাবলী ও শর্তাবলী পড়ুন</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section section-muted">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag" data-i18n="faq_tag">সাধারণ জিজ্ঞাসা</div>
+        <h2 class="section-title" data-i18n="faq_title">রুকইয়াহ ও হিজামা সম্পর্কিত সাধারণ প্রশ্নোত্তর</h2>
+        <p class="section-description" data-i18n="faq_desc">
+          চিকিৎসা পদ্ধতি, অ্যাপয়েন্টমেন্ট শিডিউলিং ও শরয়ী দিকনির্দেশনা সম্পর্কিত স্পষ্ট উত্তর।
+        </p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q1">প্রাথমিক রুকইয়াহ সেশনে কী কী করা হয়?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq_a1">
+            রাক্বী রোগীর কাছ থেকে বিস্তারিত সমস্যা শুনেন, লক্ষণ ও পূর্বের চিকিৎসার ইতিহাস নেন। এরপর পবিত্র কুরআন ও সহীহ হাদিস বর্ণিত দোয়াসমূহ পাঠ করেন এবং শারীরিক প্রতিক্রিয়া পর্যবেক্ষণ করেন। পরিশেষে ব্যবস্থাপত্র ও প্রয়োজনীয় নির্দেশনা দেওয়া হয়।
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q2">আপনারা কি সুস্থতার শতভাগ গ্যারান্টি দেন?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq_a2">
+            না, কোনো সহীহ আক্বীদার মুসলিম শতভাগ শেফার নিশ্চয়তা দিতে পারে না। শেফা দেওয়ার একমাত্র মালিক মহান আল্লাহ। রুকইয়াহ হলো আরোগ্য লাভের একটি শরয়ী মাধ্যম মাত্র। যারা ১০০% গ্যারান্টি দাবি করে তারা শরীয়ত বিরোধী কাজ করে।
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q3">মহিলাদের হিজামার জন্য কি নারী থেরাপিস্ট আছেন?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq_a3">
+            হ্যাঁ, মা-বোনদের হিজামার জন্য অভিজ্ঞ ও প্রশিক্ষণপ্রাপ্ত নারী থেরাপিস্ট নিয়োজিত রয়েছেন এবং সম্পূর্ণ পর্দাযুক্ত পৃথক কক্ষের ব্যবস্থা রয়েছে। রুকইয়াহ সেশনের ক্ষেত্রে নারী রোগীর সাথে প্রাপ্তবয়স্ক মাহরাম থাকা বাধ্যতামূলক।
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q4">অনলাইন বুকিং কীভাবে কাজ করে?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq_a4">
+            ক্যালেন্ডার থেকে আপনার পছন্দের তারিখ ও সময় নির্বাচন করে রোগীর বিবরণ দিন। বুকিং নিশ্চিত হওয়ার সাথে সাথে স্লটটি অন্যদের তালিকা থেকে স্বয়ংক্রিয়ভাবে বন্ধ হয়ে যাবে এবং আপনি বুকিং আইডি ও রেফারেন্স পাবেন।
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faq_q5">হিজামার পূর্বে কী প্রস্তুতি নিতে হবে?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer" data-i18n="faq_a5">
+            হিজামার অন্তত ২.৫ থেকে ৩ ঘণ্টা পূর্বে ভারী খাবার পরিহার করুন; খেজুর বা হালকা পানীয় নেওয়া যায়। প্রচুর পানি পান করুন এবং শরীর পরিচ্ছন্ন করে আসুন। রক্ত পাতলা করার ওষুধ খেলে থেরাপিস্টকে আগেই জানান।
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Location & Contact Summary -->
+  <section class="section">
+    <div class="container">
+      <div style="background-color: var(--primary); color: #FFFFFF; border-radius: var(--radius-lg); padding: 3rem 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center;" class="hero-grid">
+        <div>
+          <span class="badge badge-gold" style="margin-bottom: 0.75rem;" data-i18n="location_tag">আমাদের ঠিকানা</span>
+          <h2 style="color: #FFFFFF; font-size: 2rem; margin-bottom: 1rem;" data-i18n="location_title">
+            আমাদের ঠিকানা
+          </h2>
+          <p style="color: #E2E8F0; font-size: 1.05rem; margin-bottom: 1.5rem;" data-i18n="location_desc">
+            সহজ যাতায়াত ও নিভৃত শান্ত পরিবেশে আমাদের সেবা কেন্দ্র।
+          </p>
+
+          <div style="font-size: 0.95rem; line-height: 1.8;">
+            <div style="margin-bottom: 1rem; color: #FFFFFF;" data-i18n="location_address_val">
+              📍 <strong>ভূঞা ম্যানশন,</strong><br>
+              ফেনী আদর্শ হাউজিং সোসাইটি<br>
+              মহিপাল, ফেনী<br><br>
+              নোয়াখালী/দাগনভূঞা রোড<br>
+              স্টার লাইন হাসপাতালের বিপরীত পাশে,<br>
+              হাউজিং মসজিদ সংলগ্ন, ভূঞা ম্যানশন।
+            </div>
+            <p style="margin: 0;">📞 <strong>ফোন / হোয়াটসঅ্যাপ:</strong> <span data-i18n="phone">০১৭৫৮-৩৫৪৯২০</span></p>
+            <p style="margin: 0;">🕒 <strong data-i18n="schedule_card_days">শনিবার থেকে বৃহস্পতিবার: সকাল ০৯:০০ – রাত ০৮:০০</strong></p>
+          </div>
+        </div>
+
+        <div style="text-align: center; background: rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); padding: 2rem;">
+          <h3 style="color: #FFFFFF; margin-bottom: 0.75rem;" data-i18n="booking_title">১ ঘণ্টার নির্ধারিত অ্যাপয়েন্টমেন্ট বুকিং</h3>
+          <p style="color: #E2E8F0; font-size: 0.95rem; margin-bottom: 1.5rem;" data-i18n="booking_subtitle">
+            রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা। স্বয়ংক্রিয় অনলাইন বুকিং সিস্টেম।
+          </p>
+          <a href="/book" class="btn btn-accent btn-lg" style="width: 100%; margin-bottom: 0.75rem;" data-i18n="hero_cta_book">
+            অনলাইনে অ্যাপয়েন্টমেন্ট নিন
+          </a>
+          <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="width: 100%;" data-i18n="hero_cta_wa">
+            হোয়াটসঅ্যাপে পরামর্শ নিন
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: inline-flex; align-items: center; background: #ffffff; padding: 6px 14px; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 3px 10px rgba(0,0,0,0.15);">
+            <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center" style="height: 44px; width: auto; object-fit: contain;">
+          </div>
+          <p data-i18n="footer_brand_desc">
+            রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার (ফেনী শাখা) পবিত্র কুরআন ও সহীহ সুন্নাহর আলোকে বিশুদ্ধ রুকইয়াহ ও সুন্নাতী হিজামা কাপিং থেরাপি প্রদান করে।
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_quick_links">প্রয়োজনীয় লিংক</h4>
+          <ul class="footer-links">
+            <li><a href="/" data-i18n="nav_home">হোম</a></li>
+            <li><a href="/about" data-i18n="nav_about">আমাদের সম্পর্কে ও রাক্বী</a></li>
+            <li><a href="/services" data-i18n="nav_services">রুকইয়াহ সেবাসমূহ</a></li>
+            <li><a href="/services#hijama" data-i18n="hijama_title">সুন্নাতী হিজামা</a></li>
+            <li><a href="/policies" data-i18n="nav_policies">নিয়ম ও নীতিমালা</a></li>
+            <li><a href="/contact" data-i18n="nav_contact">যোগাযোগ ও অবস্থান</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_portal">রোগী সেবা পোর্টাল</h4>
+          <ul class="footer-links">
+            <li><a href="/book" data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</a></li>
+            <li><a href="/lookup" data-i18n="nav_lookup">বুকিং স্ট্যাটাস দেখুন</a></li>
+            <li><a href="/policies#prep" data-i18n="guideline_t1">রোগীর প্রস্তুতি</a></li>
+            <li><a href="/policies#female" data-i18n="guideline_t2">নারী রোগীদের মাহরাম সংক্রান্ত নিয়ম</a></li>
+            <li><a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন ড্যাশবোর্ড</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_address_title">ক্লিনিকের ঠিকানা ও যোগাযোগ</h4>
+          <p style="font-size: 0.9rem; line-height: 1.7;" data-i18n="footer_address_text">
+            <strong>ফেনী শাখা:</strong><br>
+            ভুঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী, বাংলাদেশ।<br>
+            <strong>ফোন / হোয়াটসঅ্যাপ:</strong> ০১৭৫৮-৩৫৪৯২০<br>
+            <strong>সময়সূচী:</strong> শনি – বৃহস্পতি: ০৯:০০ – ২০:০০<br>
+            (বিরতি: ০১:০০ – ০২:০০)
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div data-i18n="footer_rights">
+          সর্বস্বত্ব সংরক্ষিত © ২০২৬ রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা।
+        </div>
+        <div data-i18n="footer_motto">
+          নিখাদ তাওহীদ ও তিব্বে নববীর বিশুদ্ধ সেবা।
+        </div>
+      </div>
+
+      <!-- Developer & Technical Support Section (Homepage Only) -->
+      <div class="footer-developer" style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed rgba(255, 255, 255, 0.15); text-align: center; font-size: 0.85rem; color: #CBD5E1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem;">
+        <div>
+          <strong style="color: #F1F5F9; font-weight: 600;">Website Development &amp; Technical Support</strong>
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 0.35rem;">
+          <strong style="color: #94A3B8;">Telegram:</strong>
+          <a href="https://t.me/mzzrahman" target="_blank" rel="noopener noreferrer" style="color: #F59E0B; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: color 0.2s ease;" onmouseover="this.style.color='#FCD34D'; this.style.textDecoration='underline';" onmouseout="this.style.color='#F59E0B'; this.style.textDecoration='none';">
+            <svg style="width: 14px; height: 14px; fill: currentColor; vertical-align: middle;" viewBox="0 0 24 24">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.868.916z"/>
+            </svg>
+            @mzzrahman
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Quick Connect -->
+  <a href="https://wa.me/8801758354920?text=Assalamu%20Alaikum.%20I%20would%20like%20to%20inquire%20about%20Ruqyah%20services%20in%20Feni." 
+     target="_blank" rel="noopener noreferrer" class="floating-whatsapp" aria-label="WhatsApp Us">
+    <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/>
+    </svg>
+    <span>WhatsApp (01758-354920)</span>
+  </a>
+
+  <script src="/js/translations.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Temporary development files & test outputs
+scratch/
+*.log
+npm-debug.log*
+scripts/*.jpg
+scripts/*.pdf
+scripts/*.svg
+
+# Deployment archives
+*.zip
+
+# SQLite temporary journal files
+database/ruqyah.db-shm
+database/ruqyah.db-wal
+database/*.bak*
+
+# OS metadata
+.DS_Store
+Thumbs.db

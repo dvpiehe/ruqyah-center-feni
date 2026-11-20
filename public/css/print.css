@@ -1,0 +1,65 @@
+/* Print Styling for Ruqyah Clinical Records */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  .no-print,
+  .site-header,
+  .site-footer,
+  .admin-sidebar,
+  .admin-topbar,
+  .floating-whatsapp,
+  .btn,
+  .toast-container {
+    display: none !important;
+  }
+
+  .print-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-header {
+    border-bottom: 2pt solid #064E3B;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+
+  .print-section {
+    margin-bottom: 12pt;
+    page-break-inside: avoid;
+  }
+
+  .print-section-title {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #064E3B;
+    border-bottom: 1pt solid #CBD5E1;
+    padding-bottom: 2pt;
+    margin-bottom: 5pt;
+  }
+
+  .print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 7pt;
+    color: #64748B;
+    border-top: 1pt solid #E2E8F0;
+    padding-top: 4pt;
+  }
+}

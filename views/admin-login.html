@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অ্যাডমিন লগইন | রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <style>
+    body {
+      background-color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 440px;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+    .login-lang-switch {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--border-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #F8FAF9;
+    }
+    .login-lang-switch button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <!-- Language Switcher -->
+    <div class="login-lang-switch">
+      <button type="button" class="lang-btn-bn active" onclick="setLanguage('bn')" style="font-weight: 700; color: var(--primary);">বাংলা</button>
+      <span style="color: var(--text-muted); font-size: 0.75rem;">|</span>
+      <button type="button" class="lang-btn-en" onclick="setLanguage('en')" style="color: var(--text-muted);">English</button>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <img src="/images/logo.svg" alt="Ruqyah Support & Cupping Center Logo" style="height: 48px; margin-bottom: 1rem;">
+      <span class="badge badge-primary" style="font-size: 0.8rem; margin-bottom: 0.5rem;" data-i18n="login_auth_badge">অনুমোদিত ক্লিনিক্যাল অ্যাক্সেস</span>
+      <h2 style="color: var(--primary); font-size: 1.5rem; margin-top: 0.5rem;" data-i18n="login_title">অ্যাডমিনিস্ট্রেটর পোর্টাল</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;" data-i18n="login_sub">
+        রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা
+      </p>
+    </div>
+
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label class="form-label" for="adminUsername" data-i18n="login_user_label">ব্যবহারকারীর নাম (ইউজারনেম):</label>
+        <input type="text" id="adminUsername" class="form-control" placeholder="অ্যাডমিন ইউজারনেম লিখুন" data-i18n-placeholder="login_user_placeholder" required autofocus>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label class="form-label" for="adminPassword" data-i18n="login_pass_label">পাসওয়ার্ড:</label>
+        <input type="password" id="adminPassword" class="form-control" placeholder="••••••••••••" required>
+      </div>
+
+      <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width: 100%;" data-i18n="login_btn">
+        পোর্টালে প্রবেশ করুন
+      </button>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-muted);" data-i18n="login_default_notice">
+        ডিফল্ট অ্যাডমিন তথ্য: <code>admin</code> / <code>Admin@12345</code>
+      </div>
+    </form>
+
+    <div style="margin-top: 2rem; border-top: 1px solid var(--border-light); padding-top: 1rem; text-align: center;">
+      <a href="/" style="font-size: 0.85rem; color: var(--text-muted);" data-i18n="login_back">← মূল ওয়েবসাইটে ফিরে যান</a>
+    </div>
+  </div>
+
+  <script src="/js/translations.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.getElementById('adminLoginForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginSubmitBtn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = (getCurrentLang() === 'bn') ? 'যাচাই করা হচ্ছে...' : 'Verifying credentials...';
+
+      const payload = {
+        username: document.getElementById('adminUsername')?.value?.trim(),
+        password: document.getElementById('adminPassword')?.value
+      };
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast((getCurrentLang() === 'bn') ? 'লগইন সফল হয়েছে। রিডাইরেক্ট করা হচ্ছে...' : 'Authentication successful. Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 400);
+        } else {
+          showToast(data.error || ((getCurrentLang() === 'bn') ? 'ভুল ইউজারনেম বা পাসওয়ার্ড।' : 'Invalid credentials.'), 'error');
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      } catch (err) {
+        showToast((getCurrentLang() === 'bn') ? 'সার্ভার সংযোগ বিচ্ছিন্ন।' : 'Login server connection failed.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    });
+  </script>
+</body>
+</html>

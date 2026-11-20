@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruqyah Session Report | Ruqyah Support & Cupping Center</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/print.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <style>
+    @font-face {
+      font-family: 'Noto Sans Bengali';
+      src: url('/fonts/NotoSansBengali.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      font-family: 'Noto Sans Bengali', 'Nirmala UI', 'Segoe UI', Arial, sans-serif;
+      background-color: #F1F5F9;
+      padding: 2rem 1rem;
+    }
+    .print-page {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 2.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+    }
+    .lang-btn-group {
+      display: inline-flex;
+      border: 1px solid #CBD5E1;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .lang-toggle-btn {
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: none;
+      background: #F1F5F9;
+      color: #334155;
+      transition: all 0.2s;
+    }
+    .lang-toggle-btn.active {
+      background: #064E3B;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+    .report-card-section {
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      background: #FFFFFF;
+    }
+    .report-card-section.highlight {
+      background: #FAFDFB;
+      border: 1.5px solid #059669;
+    }
+    .report-section-hdr {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #064E3B;
+      margin: 0 0 0.6rem 0;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .report-card-section.highlight .report-section-hdr {
+      color: #065F46;
+      border-bottom-color: #ECFDF5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Action Bar (hidden on print) -->
+  <div class="no-print" style="max-width: 820px; margin: 0 auto 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+    <a href="/admin#sessions" class="btn btn-secondary btn-sm" id="btnBack">← সেশন তালিকা (Admin)</a>
+    
+    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+      <div class="lang-btn-group">
+        <button type="button" class="lang-toggle-btn active" id="btnLangBn" onclick="switchReportLang('bn')">বাংলা</button>
+        <button type="button" class="lang-toggle-btn" id="btnLangEn" onclick="switchReportLang('en')">English</button>
+      </div>
+      <a id="downloadPdfBn" href="#" class="btn btn-primary btn-sm" download>📥 বাংলা PDF ডাউনলোড</a>
+      <a id="downloadPdfEn" href="#" class="btn btn-secondary btn-sm" download>📥 English PDF Download</a>
+      <button onclick="window.print()" class="btn btn-secondary btn-sm">🖨 Print</button>
+    </div>
+  </div>
+
+  <div class="print-page" id="printableArea">
+    <!-- Header -->
+    <div class="print-header" style="border-bottom: 2px solid #064E3B; padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <img src="/images/logo.png" alt="Ruqyah Center Logo" style="height: 65px; max-width: 140px; object-fit: contain;">
+        <div>
+          <div id="hdrClinicName" style="font-weight: 800; color: #064E3B; font-size: 1.2rem; line-height: 1.2;">রুকইয়াহ সাপোর্ট এন্ড কাপিং সেন্টার</div>
+          <div id="hdrClinicSub" style="font-size: 0.82rem; color: #475569; margin-top: 2px; line-height: 1.4;">
+            ফেনী শাখা  |  ভূঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী<br>
+            হটলাইন / হোয়াটসঅ্যাপ: ০১৭৫৮-৩৫৪৯২০  |  পরিচালক ও প্রধান রাকি: মুহাম্মদুল্লাহ মিয়া
+          </div>
+        </div>
+      </div>
+      <div style="text-align: right; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 0.5rem 1rem; border-radius: 6px;">
+        <div id="hdrRepTitle" style="font-weight: 800; color: #064E3B; font-size: 0.95rem;">রুকইয়াহ শারঈয়্যাহ সেশন প্রেসক্রিপশন রিপোর্ট</div>
+        <div style="font-size: 0.8rem; color: #334155;" id="repSessionRef">সেশন রেফারেন্স: ...</div>
+        <div style="font-size: 0.75rem; color: #64748B;" id="repDateRef">তারিখ: ...</div>
+      </div>
+    </div>
+
+    <!-- Session & Patient Meta Box -->
+    <div style="background-color: #F8FAF9; border: 1px solid #CBD5E1; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; font-size: 0.9rem;">
+      <div>
+        <span id="lblPatientName" style="color: #64748B; font-size: 0.75rem; display: block;">রোগীর নাম</span>
+        <strong id="sPatientName">Loading...</strong>
+      </div>
+      <div>
+        <span id="lblPatientId" style="color: #64748B; font-size: 0.75rem; display: block;">রোগী আইডি</span>
+        <strong id="sPatientId" style="color: #064E3B;">...</strong>
+      </div>
+      <div>
+        <span id="lblSessionNum" style="color: #64748B; font-size: 0.75rem; display: block;">সেশন নম্বর</span>
+        <strong id="sSessionNum">...</strong>
+      </div>
+      <div>
+        <span id="lblDate" style="color: #64748B; font-size: 0.75rem; display: block;">সেশনের তারিখ</span>
+        <span id="sDate">...</span>
+      </div>
+      <div>
+        <span id="lblRaqi" style="color: #64748B; font-size: 0.75rem; display: block;">পরিচালক রাকি</span>
+        <span id="sRaqi" style="font-weight: 600;">মুহাম্মদুল্লাহ মিয়া</span>
+      </div>
+      <div>
+        <span id="lblFollowupDate" style="color: #64748B; font-size: 0.75rem; display: block;">পরবর্তী ফলোআপ</span>
+        <span id="sFollowupDate" style="color: #059669; font-weight: 700;">...</span>
+      </div>
+    </div>
+
+    <!-- Section 1: Patient's Main Symptoms -->
+    <div class="report-card-section">
+      <div class="report-section-hdr" id="lblSec1Title">১. রোগীর প্রধান উপসর্গসমূহ</div>
+      <div style="font-size: 0.9rem; line-height: 1.6; color: #1E293B; white-space: pre-wrap;" id="sMainSymptoms">...</div>
+    </div>
+
+    <!-- Section 2: Patient's Physical Condition During Recitation -->
+    <div class="report-card-section" style="border-left: 4px solid var(--accent-gold);">
+      <div class="report-section-hdr" id="lblSec2Title" style="color: #B45309;">২. তেলাওয়াত চলাকালীন রোগীর শারীরিক অবস্থা</div>
+      <div style="margin-bottom: 0.75rem;">
+        <span id="lblObservedReactions" style="font-size: 0.8rem; font-weight: 700; color: #64748B; display: block; margin-bottom: 0.35rem;">পর্যবেক্ষণকৃত শারীরিক প্রতিক্রিয়া:</span>
+        <div id="sReactions" style="font-size: 0.9rem; line-height: 1.6; color: #1E293B;">...</div>
+      </div>
+      <div id="physicalObservationsBox" style="display: none; padding-top: 0.5rem; border-top: 1px dashed #E2E8F0;">
+        <span id="lblPhysicalObs" style="font-size: 0.8rem; font-weight: 700; color: #64748B; display: block; margin-bottom: 0.25rem;">অতিরিক্ত পর্যবেক্ষণ:</span>
+        <div id="sPhysicalObs" style="font-size: 0.9rem; line-height: 1.5; color: #334155; white-space: pre-wrap;"></div>
+      </div>
+    </div>
+
+    <!-- Section 3: Raqi's Preliminary Diagnosis (Highlighted) -->
+    <div class="report-card-section highlight">
+      <div class="report-section-hdr" id="lblSec3Title">৩. রাকীর প্রাথমিক ডায়াগনোসিস</div>
+      <div style="font-size: 0.95rem; font-weight: 700; color: #065F46; line-height: 1.6;" id="sManualDiagnosis">...</div>
+    </div>
+
+    <!-- Section 4: Prescribed Amal -->
+    <div class="report-card-section">
+      <div class="report-section-hdr" id="lblSec4Title">৪. প্রেসক্রাইবকৃত আমল</div>
+      <div style="font-size: 0.9rem; line-height: 1.6; color: #1E293B; white-space: pre-wrap;" id="sPrescribedAmal">...</div>
+    </div>
+
+    <!-- Section 5: Raqi's Comments -->
+    <div class="report-card-section">
+      <div class="report-section-hdr" id="lblSec5Title">৫. রাকীর মন্তব্য</div>
+      <div style="font-size: 0.9rem; line-height: 1.6; color: #1E293B; white-space: pre-wrap;" id="sRaqiComments">...</div>
+    </div>
+
+    <!-- Section 6: Special Advice -->
+    <div class="report-card-section">
+      <div class="report-section-hdr" id="lblSec6Title">৬. বিশেষ নসিহত</div>
+      <div style="font-size: 0.9rem; line-height: 1.6; color: #1E293B; white-space: pre-wrap;" id="sSpecialAdvice">...</div>
+    </div>
+
+    <!-- Official Signatures Block -->
+    <div style="margin-top: 2rem; border-top: 1px solid #CBD5E1; padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="border: 1px dashed #94A3B8; padding: 1.25rem 2rem; text-align: center; color: #94A3B8; font-size: 0.8rem; border-radius: 4px;" id="lblOfficialSeal">
+          [ ক্লিনিক অফিসিয়াল সিল ]
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-family: cursive; font-size: 1.3rem; color: #064E3B; margin-bottom: 0.25rem;" id="sSignatureRaqi">মুহাম্মদুল্লাহ মিয়া</div>
+        <div style="border-top: 1.5px solid #064E3B; width: 180px; margin-left: auto; padding-top: 3px;">
+          <strong style="font-size: 0.85rem; color: #0F172A;" id="sRaqiNameSign">মুহাম্মদুল্লাহ মিয়া</strong>
+          <div style="font-size: 0.75rem; color: #64748B;" id="lblRaqiTitle">পরিচালক ও প্রধান রাকি</div>
+          <div style="font-size: 0.7rem; color: #059669;">রুকইয়াহ সাপোর্ট এন্ড কাপিং সেন্টার (ফেনী)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Shifa Notice -->
+    <div style="margin-top: 2rem; text-align: center; border-top: 1px solid #E2E8F0; padding-top: 0.75rem; font-size: 0.75rem; color: #94A3B8;" id="lblFooterShifa">
+      গোপনীয় স্বাস্থ্য বিবরণী • শিফা ও পূর্ণ সুস্থতা কেবল মহান আল্লাহর পক্ষ থেকে।
+    </div>
+  </div>
+
+  <script>
+    let globalSessionData = null;
+    let activeReportLang = 'bn';
+
+    const CLINICAL_DICT = {
+      'Trembling / involuntary shivering in limbs': 'অঙ্গপ্রত্যঙ্গে কাঁপুনি বা কম্পন',
+      'Deep repeated yawning': 'বারবার গভীর হাই তোলা',
+      'Profuse cold sweating': 'শরীর ঠান্ডা হয়ে ঘাম বের হওয়া',
+      'Sudden weeping / tears without grief': 'অকারণে হঠাৎ কান্না বা অশ্রুপাত',
+      'Nausea / urge to vomit': 'বমি বমি ভাব বা বমির তীব্র বেগ',
+      'Vocal alteration / involuntary speech': 'কণ্ঠস্বরের পরিবর্তন বা অনৈচ্ছিক কথা',
+      'Rapid heart palpitations': 'হৃদস্পন্দন দ্রুত হওয়া বা ধড়ফড়',
+      'Temporary numbness or paralysis in hands/feet': 'হাত-পায়ে অবশ ভাব বা অসাড়তা',
+      'Calmness / no adverse physical reaction': 'স্বাভাবিক বা কোনো অস্বাভাবিক প্রতিক্রিয়া নেই',
+      'আইন (Ayn)': 'Ayn (Evil Eye)',
+      'হাসাদ (Hasad)': 'Hasad (Envy / Malice)',
+      'সেহের (Sihr)': 'Sihr (Magic / Sorcery)',
+      'জ্বিনের প্রভাব (Jinn Influence)': 'Jinn Influence (Possession / Touch)',
+      'আইন + হাসাদ': 'Ayn + Hasad',
+      'আইন + সেহের': 'Ayn + Sihr',
+      'হাসাদ + সেহের': 'Hasad + Sihr',
+      'জ্বিন + সেহের': 'Jinn + Sihr',
+      'একাধিক সমস্যা (Multiple)': 'Multiple Afflictions',
+      'নরমাল / নির্দিষ্ট কোনো লক্ষণ শনাক্ত হয়নি (Normal)': 'Normal / No Specific Symptoms Detected',
+      'অন্যান্য (Other)': 'Other',
+      'Spiritual Affliction Suspected (Hasad/Evil Eye)': 'শারঈ সমস্যা সন্দেহভাজন (হাসাদ বা বদনজর)',
+      'Spiritual Affliction Suspected (Sihr)': 'শারঈ সমস্যা সন্দেহভাজন (সিহর বা জাদু)',
+      'Spiritual Affliction Suspected (Mass/Touch)': 'শারঈ সমস্যা সন্দেহভাজন (মাসস বা জিনের আসর)',
+      'Medical / Psychological Evaluation Advised': 'চিকিৎসাগত বা মানসিক বিশেষজ্ঞের পরামর্শ প্রয়োজন',
+      'Inconclusive / Further Observation Needed': 'অনির্ধারিত বা আরও নিবিড় পর্যবেক্ষণ প্রয়োজন',
+      'Clear / No Evidence of Spiritual Affliction': 'সন্দেহমুক্ত বা কোনো রূহানি সমস্যার প্রমাণ নেই'
+    };
+
+    function translateTerm(term, lang) {
+      if (!term) return '';
+      const clean = String(term).trim();
+      if (lang === 'bn') {
+        if (CLINICAL_DICT[clean]) return CLINICAL_DICT[clean];
+        for (const [k, v] of Object.entries(CLINICAL_DICT)) {
+          if (clean.toLowerCase() === k.toLowerCase()) return v;
+        }
+        return toBnDigits(clean);
+      } else {
+        for (const [k, v] of Object.entries(CLINICAL_DICT)) {
+          if (clean === v || clean.toLowerCase() === v.toLowerCase()) return k;
+        }
+        if (CLINICAL_DICT[clean]) return CLINICAL_DICT[clean];
+        return toEnDigits(clean);
+      }
+    }
+
+    function toBnDigits(str) {
+      if (!str) return '';
+      const bn = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+      return String(str).replace(/[0-9]/g, d => bn[d]);
+    }
+
+    function toEnDigits(str) {
+      if (!str) return '';
+      const en = { '০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9' };
+      return String(str).replace(/[০-৯]/g, d => en[d] || d);
+    }
+
+    function parseList(val) {
+      if (!val) return [];
+      try {
+        const parsed = JSON.parse(val);
+        return Array.isArray(parsed) ? parsed : [String(val)];
+      } catch {
+        return [String(val)];
+      }
+    }
+
+    function switchReportLang(lang) {
+      activeReportLang = lang;
+      document.getElementById('btnLangBn').classList.toggle('active', lang === 'bn');
+      document.getElementById('btnLangEn').classList.toggle('active', lang === 'en');
+      if (globalSessionData) renderSessionReport(globalSessionData, lang);
+    }
+
+    function renderSessionReport(s, lang) {
+      const isBn = lang === 'bn';
+
+      // Action bar & Headers
+      document.getElementById('btnBack').textContent = isBn ? '← সেশন তালিকা (Admin)' : '← Back to Ruqyah Sessions';
+      document.getElementById('hdrClinicName').textContent = isBn ? 'রুকইয়াহ সাপোর্ট এন্ড কাপিং সেন্টার' : 'RUQYAH SUPPORT & CUPPING CENTER';
+      document.getElementById('hdrClinicSub').innerHTML = isBn 
+        ? 'ফেনী শাখা  |  ভূঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী<br>হটলাইন / হোয়াটসঅ্যাপ: ০১৭৫৮-৩৫৪৯২০  |  পরিচালক ও প্রধান রাকি: মুহাম্মদুল্লাহ মিয়া'
+        : 'FENI BRANCH  |  Bhuya Mansion, Adarsha Housing Society, Mohipal, Feni<br>Hotline / WhatsApp: 01758-354920  |  Lead Raqi: Muhammadullah Miah';
+      document.getElementById('hdrRepTitle').textContent = isBn ? 'রুকইয়াহ শারঈয়্যাহ সেশন প্রেসক্রিপশন রিপোর্ট' : 'RUQYAH SESSION CLINICAL REPORT';
+      document.getElementById('repSessionRef').textContent = isBn ? `সেশন আইডি: ${s.session_id}` : `Ref: ${s.session_id}`;
+      document.getElementById('repDateRef').textContent = isBn ? `তারিখ: ${toBnDigits(s.session_date)}` : `Date: ${s.session_date}`;
+
+      // Metadata labels & values
+      document.getElementById('lblPatientName').textContent = isBn ? 'রোগীর নাম' : 'PATIENT NAME';
+      document.getElementById('sPatientName').textContent = s.patient_name;
+
+      document.getElementById('lblPatientId').textContent = isBn ? 'রোগী আইডি' : 'PATIENT ID';
+      document.getElementById('sPatientId').textContent = s.patient_id;
+
+      document.getElementById('lblSessionNum').textContent = isBn ? 'সেশন নম্বর' : 'SESSION NUMBER';
+      document.getElementById('sSessionNum').textContent = isBn ? `#${toBnDigits(s.session_number)}` : `#${s.session_number}`;
+
+      document.getElementById('lblDate').textContent = isBn ? 'সেশনের তারিখ' : 'SESSION DATE';
+      document.getElementById('sDate').textContent = isBn ? toBnDigits(s.session_date) : s.session_date;
+
+      document.getElementById('lblRaqi').textContent = isBn ? 'পরিচালক রাকি' : 'CONDUCTING RAQI';
+      document.getElementById('sRaqi').textContent = isBn ? 'মুহাম্মদুল্লাহ মিয়া' : (s.raqi_name || 'Muhammadullah Miah');
+
+      document.getElementById('lblFollowupDate').textContent = isBn ? 'পরবর্তী ফলোআপ' : 'NEXT FOLLOW-UP';
+      document.getElementById('sFollowupDate').textContent = s.next_followup_date 
+        ? (isBn ? toBnDigits(s.next_followup_date) : s.next_followup_date)
+        : (isBn ? 'নির্ধারিত হবে' : 'To be scheduled');
+
+      // Section 1: Patient's Main Symptoms
+      document.getElementById('lblSec1Title').textContent = isBn ? '১. রোগীর প্রধান উপসর্গসমূহ' : '1. PATIENT\'S MAIN SYMPTOMS';
+      const mainSyms = s.patient_main_symptoms || s.reported_symptoms || s.initial_assessment || (isBn ? 'কোনো প্রধান উপসর্গ লিপিবদ্ধ করা হয়নি।' : 'No primary symptoms recorded.');
+      document.getElementById('sMainSymptoms').textContent = translateTerm(mainSyms, lang);
+
+      // Section 2: Patient's Physical Condition During Recitation
+      document.getElementById('lblSec2Title').textContent = isBn ? '২. তেলাওয়াত চলাকালীন রোগীর শারীরিক অবস্থা' : '2. PATIENT\'S PHYSICAL CONDITION DURING RECITATION';
+      document.getElementById('lblObservedReactions').textContent = isBn ? 'পর্যবেক্ষণকৃত শারীরিক প্রতিক্রিয়া:' : 'Observed Physical Reactions:';
+      const reactions = parseList(s.observed_reactions);
+      document.getElementById('sReactions').innerHTML = reactions.length > 0 
+        ? reactions.map(r => `• ${translateTerm(r, lang)}`).join('<br>') 
+        : (isBn ? '• তিলাওয়াতকালে কোনো অস্বাভাবিক শারীরিক প্রতিক্রিয়া দেখা যায়নি।' : '• No abnormal physical reactions observed.');
+
+      const physObs = s.physical_observations || s.raqi_observations || '';
+      const physObsBox = document.getElementById('physicalObservationsBox');
+      if (physObs && physObs.trim()) {
+        physObsBox.style.display = 'block';
+        document.getElementById('lblPhysicalObs').textContent = isBn ? 'অতিরিক্ত পর্যবেক্ষণ ও মন্তব্য:' : 'Additional Physical Observations:';
+        document.getElementById('sPhysicalObs').textContent = translateTerm(physObs, lang);
+      } else {
+        physObsBox.style.display = 'none';
+      }
+
+      // Section 3: Raqi's Preliminary Diagnosis
+      document.getElementById('lblSec3Title').textContent = isBn ? '৩. রাকীর প্রাথমিক ডায়াগনোসিস' : '3. RAQI\'S PRELIMINARY DIAGNOSIS';
+      let diagList = parseList(s.manual_diagnosis);
+      if (diagList.length === 0 && s.assessment_category) {
+        diagList = s.assessment_category.split(',').map(d => d.trim()).filter(Boolean);
+      }
+      document.getElementById('sManualDiagnosis').innerHTML = diagList.length > 0
+        ? diagList.map(d => `☑ ${translateTerm(d, lang)}`).join('<br>')
+        : (isBn ? 'ক্লিনিক্যাল পর্যবেক্ষণে রয়েছে' : 'Under Clinical Evaluation');
+
+      // Section 4: Prescribed Amal
+      document.getElementById('lblSec4Title').textContent = isBn ? '৪. প্রেসক্রাইবকৃত আমল' : '4. PRESCRIBED AMAL';
+      const amalText = s.prescribed_amal || (typeof s.prescribed_remedies === 'string' && !s.prescribed_remedies.startsWith('[') ? s.prescribed_remedies : '') || (isBn ? 'নির্দিষ্ট কোনো আমল প্রেসক্রাইব করা হয়নি।' : 'No prescribed amal recorded.');
+      document.getElementById('sPrescribedAmal').textContent = translateTerm(amalText, lang);
+
+      // Section 5: Raqi's Comments
+      document.getElementById('lblSec5Title').textContent = isBn ? '৫. রাকীর মন্তব্য' : '5. RAQI\'S COMMENTS';
+      const commentsText = s.raqi_comments || s.professional_assessment || (isBn ? 'কোনো অতিরিক্ত মন্তব্য নেই।' : 'No additional comments recorded.');
+      document.getElementById('sRaqiComments').textContent = translateTerm(commentsText, lang);
+
+      // Section 6: Special Advice
+      document.getElementById('lblSec6Title').textContent = isBn ? '৬. বিশেষ নসিহত' : '6. SPECIAL ADVICE';
+      const adviceText = s.special_advice || s.recommendations || (isBn ? 'পাঁচ ওয়াক্ত সালাত জামাতের সাথে আদায় ও নিয়মিত সকাল-সন্ধ্যার জিকির পালন।' : 'Maintain 5 daily prayers in congregation and daily morning & evening Adhkar.');
+      document.getElementById('sSpecialAdvice').textContent = translateTerm(adviceText, lang);
+
+      // Signatures
+      document.getElementById('lblOfficialSeal').textContent = isBn ? '[ ক্লিনিক অফিসিয়াল সিল ]' : '[ CLINIC OFFICIAL SEAL ]';
+      document.getElementById('sSignatureRaqi').textContent = isBn ? 'মুহাম্মদুল্লাহ মিয়া' : (s.raqi_name || 'Muhammadullah Miah');
+      document.getElementById('sRaqiNameSign').textContent = isBn ? 'মুহাম্মদুল্লাহ মিয়া' : (s.raqi_name || 'Muhammadullah Miah');
+      document.getElementById('lblRaqiTitle').textContent = isBn ? 'পরিচালক ও প্রধান রাকি' : 'Lead Raqi & Sunnah Practitioner';
+      document.getElementById('lblFooterShifa').textContent = isBn 
+        ? 'গোপনীয় স্বাস্থ্য বিবরণী • শিফা ও পূর্ণ সুস্থতা কেবল মহান আল্লাহর পক্ষ থেকে।'
+        : 'CONFIDENTIAL MEDICAL & SPIRITUAL HEALTH RECORD  •  Healing (Shifa) is exclusively from Allah SWT.';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const parts = window.location.pathname.split('/');
+      const sessionId = parts[parts.length - 1];
+
+      // Read optional lang query param from URL (e.g. ?lang=bn or ?lang=en)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      if (urlLang === 'en' || urlLang === 'bn') {
+        activeReportLang = urlLang;
+      }
+
+      try {
+        const res = await fetch(`/api/admin/sessions/${sessionId}`);
+        const data = await res.json();
+        if (!data.success) {
+          alert('Could not load session.');
+          return;
+        }
+
+        globalSessionData = data.data;
+
+        // Set download URLs for both languages
+        const pdfBnBtn = document.getElementById('downloadPdfBn');
+        const pdfEnBtn = document.getElementById('downloadPdfEn');
+        if (pdfBnBtn) pdfBnBtn.href = `/api/admin/reports/session/${sessionId}/pdf?lang=bn`;
+        if (pdfEnBtn) pdfEnBtn.href = `/api/admin/reports/session/${sessionId}/pdf?lang=en`;
+
+        switchReportLang(activeReportLang);
+
+      } catch (err) {
+        console.error('Session Report Load Error:', err);
+      }
+    });
+  </script>
+</body>
+</html>

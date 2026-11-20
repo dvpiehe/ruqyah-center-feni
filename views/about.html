@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="nav_about">আমাদের সম্পর্কে | রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <style>
+    .lang-switcher-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #FFFFFF;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .lang-switcher-btn.active {
+      background: rgba(255, 255, 255, 0.25);
+      font-weight: 700;
+      border-color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div>
+        <span data-i18n="topbar_address">📍 ভুঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী</span>
+        <span style="margin-left: 1.5rem;" data-i18n="topbar_phone">📞 ০১৭৫৮-৩৫৪৯২০</span>
+      </div>
+      <div class="top-bar-links" style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" data-i18n="topbar_whatsapp">হোয়াটসঅ্যাপ সহায়তা</a>
+        <a href="/lookup" data-i18n="topbar_lookup">বুকিং স্ট্যাটাস দেখুন</a>
+        <a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন প্যানেল</a>
+        <!-- Language Switcher in Top Bar -->
+        <div style="display: inline-flex; align-items: center; gap: 4px; margin-left: 0.5rem; background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 4px;">
+          <button type="button" class="lang-switcher-btn lang-btn-bn active" onclick="setLanguage('bn')">বাংলা</button>
+          <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">|</span>
+          <button type="button" class="lang-switcher-btn lang-btn-en" onclick="setLanguage('en')">English</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand-logo">
+        <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center Logo" style="height: 52px; width: auto; object-fit: contain;">
+      </a>
+      <button class="mobile-toggle" aria-label="Toggle Navigation">☰</button>
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="/" class="nav-link" data-i18n="nav_home">হোম</a></li>
+          <li><a href="/about" class="nav-link active" data-i18n="nav_about">আমাদের সম্পর্কে</a></li>
+          <li><a href="/services" class="nav-link" data-i18n="nav_services">সেবাসমূহ ও খরচ</a></li>
+          <li><a href="/articles" class="nav-link" data-i18n="nav_articles">কেস হিস্ট্রি ও আর্টিকেল</a></li>
+          <li><a href="/policies" class="nav-link" data-i18n="nav_policies">নিয়ম ও নীতিমালা</a></li>
+          <li><a href="/contact" class="nav-link" data-i18n="nav_contact">যোগাযোগ ও অবস্থান</a></li>
+          <li><a href="/lookup" class="nav-link" data-i18n="nav_lookup">বুকিং যাচাই</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+        <a href="/book" class="btn btn-primary" data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</a>
+        <div style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-light); padding: 3px 6px; border-radius: 4px;">
+          <button type="button" class="lang-btn-bn active" onclick="setLanguage('bn')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--primary);">বাং</button>
+          <span style="color: var(--text-muted); font-size: 0.75rem;">|</span>
+          <button type="button" class="lang-btn-en" onclick="setLanguage('en')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted);">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section style="background-color: var(--primary); color: #FFFFFF; padding: 3.5rem 0 4rem;">
+    <div class="container text-center" style="text-align: center;">
+      <span class="badge badge-gold" style="margin-bottom: 0.75rem;" data-i18n="about_hero_tag">আমাদের লক্ষ্য ও আদর্শ</span>
+      <h1 style="color: #FFFFFF; font-size: 2.5rem; margin-bottom: 0.75rem;" data-i18n="about_hero_title">রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার সম্পর্কে</h1>
+      <p style="color: #E2E8F0; font-size: 1.15rem; max-width: 700px; margin: 0 auto;" data-i18n="about_hero_desc">
+        পবিত্র কুরআন ও সহীহ সুন্নাহর বিশুদ্ধ নির্দেশনায় আত্মিক ও শারীরিক রোগমুক্তি সেবায় নিবেদিত ফেনী শাখার পরিচিতি।
+      </p>
+    </div>
+  </section>
+
+  <!-- Organization Overview -->
+  <section class="section">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;" class="hero-grid">
+        <div>
+          <div class="section-tag" data-i18n="about_who_tag">আমাদের প্রতিষ্ঠান</div>
+          <h2 style="font-size: 2rem; margin-bottom: 1rem;" data-i18n="about_who_title">আমরা কারা ও কেন এই উদ্যোগ?</h2>
+          <p style="color: var(--text-body); font-size: 1rem; line-height: 1.8;" data-i18n="about_who_desc1">
+            রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার (ফেনী শাখা) শিরক, কুসংস্কার ও ভণ্ড চিকিৎসার বিপরীতে তাওহীদের বিশুদ্ধ ভিত্তি নিয়ে প্রতিষ্ঠিত একটি নির্ভরযোগ্য চিকিৎসা কেন্দ্র।
+          </p>
+          <p style="color: var(--text-body); font-size: 1rem; line-height: 1.8;" data-i18n="about_who_desc2">
+            এখানে প্রতিটি রোগীকে গভীর যত্ন ও আমানতদারিতার সাথে মূল্যায়ন করা হয়। কোনো প্রকার ভুয়া অলৌকিক দাবি বা অহেতুক খরচ ব্যতিরেকে সুন্নাহসম্মত উপায়ে রুকইয়াহ শারঈয়্যাহ ও ক্লিনিক্যাল হিজামা পরিচালনা করা হয়।
+          </p>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--primary-light); padding: 2rem;">
+          <h3 style="color: var(--primary); margin-bottom: 1rem;" data-i18n="about_principles_title">আমাদের মূল নীতিমালা ও বৈশিষ্ট্য</h3>
+          <ul style="padding-left: 1.25rem; font-size: 0.95rem; color: var(--text-body); line-height: 1.8;">
+            <li><strong data-i18n="about_pr1_title">তাওহীদের নিখাদ বিশুদ্ধতা:</strong> <span data-i18n="about_pr1_desc">তাবিজ, কবচ, গণকগিরি, জিন হাজির করে অবাস্তব দাবি ইত্যাদি সম্পূর্ণ পরিহার করে নিখাদ কুরআনী চিকিৎসা।</span></li>
+            <li><strong data-i18n="about_pr2_title">পূর্ণ গোপনীয়তা ও ১ ঘণ্টার আলাদা সময়:</strong> <span data-i18n="about_pr2_desc">প্রতিটি রোগীর জন্য ১ ঘণ্টার নির্ধারিত নিভৃত স্লট। রোগীর ব্যক্তিগত ও পারিবারিক গোপনীয়তা কঠোরভাবে রক্ষা করা হয়।</span></li>
+            <li><strong data-i18n="about_pr3_title">হাসপাতাল মানের স্বাস্থ্যবিধি:</strong> <span data-i18n="about_pr3_desc">হিজামার ক্ষেত্রে শতভাগ ওয়ান-টাইম ডিসপোজেবল কাপ, জীবাণুমুক্ত সার্জিক্যাল ব্লেড ও অ্যান্টিসেপটিক ব্যবহার।</span></li>
+            <li><strong data-i18n="about_pr4_title">শেফা কেবল আল্লাহর পক্ষ থেকে:</strong> <span data-i18n="about_pr4_desc">আমরা কোনো মিথ্যে গ্যারান্টি বা জাদুকরী সুস্থতার দাবি করি না; আরোগ্য একমাত্র মহান আল্লাহর হাতে।</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Professional Identity: Muhammadullah Miah -->
+  <section class="section section-muted">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 3rem; align-items: center;" class="hero-grid">
+        <div style="text-align: center;">
+          <div style="background-color: #FFFFFF; border: 3px solid var(--primary-border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-md);">
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-subtle); color: var(--primary); font-size: 3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; border: 2px solid var(--primary);">
+              MM
+            </div>
+            <h3 style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 0.25rem;" data-i18n="about_raqi_name">মুহাম্মদুল্লাহ মিয়াহ</h3>
+            <div style="color: var(--primary-light); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem;" data-i18n="about_raqi_role">
+              কনসালট্যান্ট রাক্বী ও তিব্বে নববী প্র্যাকটিশনার
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;" data-i18n="site_title">
+              রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-tag" data-i18n="about_raqi_title">প্রধান রাক্বীর পরিচিতি</div>
+          <h2 style="font-size: 2rem; margin-bottom: 1rem;"><span data-i18n="lead_raqi">মুহাম্মদুল্লাহ মিয়াহ</span></h2>
+          <p style="color: var(--text-body); font-size: 1rem; line-height: 1.8;" data-i18n="about_raqi_bio">
+            দীর্ঘদিন যাবত সহীহ সুন্নাহর আলোকে রুকইয়াহ শারঈয়্যাহ ও কাপিং থেরাপি পরিচালনা করে আসছেন। কুরআন তিলাওয়াত, মাসনূন দোয়া ও শরয়ী মাসআলায় সুগভীর অভিজ্ঞতার অধিকারী।
+          </p>
+          <div style="margin-top: 1.5rem;">
+            <a href="/book" class="btn btn-primary" data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Treatment Philosophy -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Theological Foundation</div>
+        <h2 class="section-title">Our Treatment Philosophy</h2>
+        <p class="section-description">
+          Grounding healing practice in pure monotheism, authentic Prophetic tradition, and sound reason.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.75rem;">1. Ash-Shafi is Allah Alone</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Allah (SWT) declares: <em>"And when I am ill, it is He who cures me."</em> (Surah Ash-Shu'ara: 80). No human, Raqi, or medicine cures by their own power. All healing proceeds solely from Allah's mercy and will.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.75rem;">2. Cure Through Qur'an</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            <em>"And We send down of the Qur'an that which is healing and mercy for the believers."</em> (Surah Al-Isra: 82). The Qur'an contains profound spiritual, mental, and physical efficacy when recited with faith and contemplation.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 style="color: var(--primary); margin-bottom: 0.75rem;">3. Respect for Medical Science</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Islam encourages seeking medical treatment. The Prophet (pbuh) said: <em>"Seek treatment, for Allah has not sent down an illness without sending down a cure for it."</em> We coordinate closely with physician findings.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 3.5rem;">
+        <a href="/book" class="btn btn-primary btn-lg">Schedule a Consultation With Raqi Muhammadullah Miah</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: inline-flex; align-items: center; background: #ffffff; padding: 6px 14px; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 3px 10px rgba(0,0,0,0.15);">
+            <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center" style="height: 44px; width: auto; object-fit: contain;">
+          </div>
+          <p>
+            Ruqyah Support & Cupping Center (Feni Branch) provides authentic Shariah-based Ruqyah and prophetic Hijama cupping therapy based on the Holy Qur'an and authentic Sunnah.
+          </p>
+        </div>
+        <div>
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/services">Ruqyah Services</a></li>
+            <li><a href="/policies">Rules & Policies</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Patient Portal</h4>
+          <ul class="footer-links">
+            <li><a href="/book">Book Appointment</a></li>
+            <li><a href="/lookup">Check Booking Status</a></li>
+            <li><a href="/admin/login">Admin Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Clinic Address</h4>
+          <p style="font-size: 0.9rem; line-height: 1.7;">
+            Bhuya Mansion, Adarsha Housing Society, Mohipal, Feni.<br>
+            <strong>Phone / WhatsApp:</strong> 01758-354920
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 Ruqyah Support & Cupping Center – Feni Branch.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/translations.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

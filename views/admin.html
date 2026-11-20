@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অ্যাডমিন প্যানেল | রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+  <style>
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
+  </style>
+</head>
+<body style="background-color: #F8FAF9;">
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <img src="/images/logo.png" alt="Ruqyah Center" style="height: 38px; width: auto; object-fit: contain; background: #ffffff; padding: 3px 6px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+        </div>
+        <div style="font-size: 0.75rem; color: #10B981; font-weight: 700; margin-top: 6px; letter-spacing: 0.5px;" data-i18n="admin_panel_title">
+          ক্লিনিক্যাল অ্যাডমিন ড্যাশবোর্ড
+        </div>
+      </div>
+
+      <ul class="admin-nav">
+        <li class="admin-nav-item active" data-tab="dashboard">
+          <a href="#dashboard">
+            <span>📊</span> <span data-i18n="admin_nav_dashboard">ড্যাশবোর্ড ওভারভিউ</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="appointments">
+          <a href="#appointments">
+            <span>🗓</span> <span data-i18n="admin_nav_appointments">অ্যাপয়েন্টমেন্টসমূহ</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="calendar">
+          <a href="#calendar">
+            <span>📅</span> <span data-i18n="admin_nav_calendar">ক্যালেন্ডার ভিউ</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="availability">
+          <a href="#availability">
+            <span>⚙️</span> <span data-i18n="admin_nav_availability">সময়সূচি ও প্রাপ্যতা</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="patients">
+          <a href="#patients">
+            <span>👥</span> <span data-i18n="admin_nav_patients">রোগী ব্যবস্থাপনা (CRM)</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="sessions">
+          <a href="#sessions">
+            <span>📖</span> <span data-i18n="admin_nav_sessions">রুকইয়াহ সেশনসমূহ</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="followups">
+          <a href="#followups">
+            <span>🔄</span> <span data-i18n="admin_nav_followups">ফলো-আপ ট্র্যাকার</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="pricing">
+          <a href="#pricing">
+            <span>💰</span> <span data-i18n="admin_nav_pricing">সেবামূল্য ও চার্জ</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="reports">
+          <a href="#reports">
+            <span>📄</span> <span data-i18n="admin_nav_reports">পিডিএফ রিপোর্ট হাব</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="diagnosis">
+          <a href="#diagnosis">
+            <span>🩺</span> <span data-i18n="admin_nav_diagnosis">ডায়াগনোসিস ব্যবস্থাপনা</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="articles">
+          <a href="#articles">
+            <span>📚</span> <span data-i18n="adminNavArticles">কেস হিস্ট্রি ও আর্টিকেল</span>
+          </a>
+        </li>
+        <li class="admin-nav-item" data-tab="settings">
+          <a href="#settings">
+            <span>⚙️</span> <span data-i18n="admin_nav_settings">ক্লিনিক সেটিংস</span>
+          </a>
+        </li>
+      </ul>
+
+      <div style="border-top: 1px solid #1E293B; padding-top: 1rem; margin-top: auto;">
+        <div style="font-size: 0.8rem; color: #94A3B8; margin-bottom: 0.5rem;">
+          <span data-i18n="admin_logged_in_as">লগইনকৃত অ্যাডমিন:</span> <strong id="adminNameDisplay" style="color: #FFFFFF;">Admin</strong>
+        </div>
+        <a href="/" target="_blank" style="display: block; font-size: 0.8rem; color: #38BDF8; margin-bottom: 0.5rem;" data-i18n="admin_open_website">
+          ↗ মূল ওয়েবসাইট দেখুন
+        </a>
+        <button id="logoutBtn" class="btn btn-secondary btn-sm" style="width: 100%; background: #1E293B; color: #E2E8F0; border-color: #334155;" data-i18n="admin_logout">
+          লগআউট
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- Top Bar Header -->
+      <header class="admin-topbar">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <button id="adminSidebarToggle" class="mobile-toggle" style="display: none;">☰</button>
+          <div>
+            <h2 style="font-size: 1.25rem; color: var(--primary); margin: 0;" data-i18n="site_title">রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted);" data-i18n="admin_brand_sub">ফেনী শাখা — ক্লিনিক ব্যবস্থাপনা ও ডায়াগনোসিস সিস্টেম</div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <!-- Language Switcher in Admin Topbar -->
+          <div style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-light); padding: 3px 8px; border-radius: 4px; background: #FFF;">
+            <button type="button" class="lang-btn-bn active" onclick="setLanguage('bn')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--primary);">বাংলা</button>
+            <span style="color: var(--text-muted); font-size: 0.75rem;">|</span>
+            <button type="button" class="lang-btn-en" onclick="setLanguage('en')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted);">English</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('registerPatientModal')" data-i18n="admin_btn_new_patient">
+            + নতুন রোগী নিবন্ধন
+          </button>
+          <button class="btn btn-accent btn-sm" onclick="openNewSessionForPatient()" data-i18n="admin_btn_new_session">
+            + সেশন রেকর্ড
+          </button>
+        </div>
+      </header>
+
+      <!-- Tabs Container -->
+      <div class="admin-content">
+
+        <!-- ============================================================== -->
+        <!-- TAB 1: DASHBOARD OVERVIEW -->
+        <!-- ============================================================== -->
+        <div id="tab-dashboard" class="admin-tab-content active">
+          
+          <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.75rem; color: var(--text-main);">ক্লিনিক্যাল ড্যাশবোর্ড ওভারভিউ</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">
+              অ্যাপয়েন্টমেন্ট, রোগী নিবন্ধন, রুকইয়াহ সেশন এবং ফলো-আপের রিয়েল-টাইম তদারকি।
+            </p>
+          </div>
+
+          <!-- 8 Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: var(--primary-subtle); color: var(--primary);">👥</div>
+              <div>
+                <div class="metric-label">Total Patients</div>
+                <div class="metric-value" id="metricTotalPatients">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: #D1FAE5; color: #047857;">🗓</div>
+              <div>
+                <div class="metric-label">Today's Appointments</div>
+                <div class="metric-value" id="metricTodayAppointments">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: #DBEAFE; color: #1E40AF;">⏳</div>
+              <div>
+                <div class="metric-label">Upcoming Appts</div>
+                <div class="metric-value" id="metricUpcomingAppointments">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: #FEF3C7; color: #B45309;">⌛</div>
+              <div>
+                <div class="metric-label">Pending Confirmation</div>
+                <div class="metric-value" id="metricPendingAppointments">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: #D1FAE5; color: #065F46;">✓</div>
+              <div>
+                <div class="metric-label">Completed Appts</div>
+                <div class="metric-value" id="metricCompletedAppointments">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: #FEE2E2; color: #991B1B;">✕</div>
+              <div>
+                <div class="metric-label">Cancelled Appts</div>
+                <div class="metric-value" id="metricCancelledAppointments">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: var(--primary-subtle); color: var(--primary);">📖</div>
+              <div>
+                <div class="metric-label">Total Ruqyah Sessions</div>
+                <div class="metric-value" id="metricRuqyahSessions">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-wrap" style="background-color: var(--accent-gold-light); color: var(--accent-gold);">🩸</div>
+              <div>
+                <div class="metric-label">Total Hijama Sessions</div>
+                <div class="metric-value" id="metricHijamaSessions">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 Columns: Today's Appointments & Follow-up Reminders -->
+          <div style="display: grid; grid-template-columns: 1.4fr 0.8fr; gap: 1.5rem; margin-top: 1.5rem;">
+            
+            <!-- Today's Schedule -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--primary); font-size: 1.15rem; margin: 0;">Today's Patient Schedule</h3>
+                <button class="btn btn-outline-primary btn-sm" onclick="switchTab('appointments')">View All</button>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Time Slot</th>
+                      <th>Patient</th>
+                      <th>Service</th>
+                      <th>Status</th>
+                      <th>Notes</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="todayScheduleContainer">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Follow-up Reminders -->
+            <div class="card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--primary); font-size: 1.15rem; margin: 0;">Follow-up Reminders</h3>
+                <button class="btn btn-outline-primary btn-sm" onclick="switchTab('followups')">View All</button>
+              </div>
+              <div id="followupRemindersContainer">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 2: APPOINTMENTS MANAGEMENT -->
+        <!-- ============================================================== -->
+        <div id="tab-appointments" class="admin-tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Appointment Management</h1>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Search, confirm, reschedule, and update patient appointments.</p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openDirectBookingModal()">+ Book Walk-in / Phone Call</button>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: flex-end;">
+              <div>
+                <label class="form-label" style="font-size: 0.8rem;">Search Patient / Phone / ID:</label>
+                <input type="text" id="aptSearchInput" class="form-control" placeholder="Search by name, phone, or APT-...">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.8rem;">Filter by Date:</label>
+                <input type="date" id="aptDateFilter" class="form-control">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.8rem;">Filter by Status:</label>
+                <select id="aptStatusFilter" class="form-control">
+                  <option value="">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Rescheduled">Rescheduled</option>
+                  <option value="No Show">No Show</option>
+                </select>
+              </div>
+              <div>
+                <button class="btn btn-primary" onclick="loadAppointmentsList()" style="width: 100%;">Filter Appointments</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appointments Table -->
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>অ্যাপয়েন্টমেন্ট ও আইডি</th>
+                  <th>রোগী ও ফোন</th>
+                  <th>তারিখ ও সময়</th>
+                  <th>নির্বাচিত সেবা</th>
+                  <th>ফি / খরচ</th>
+                  <th>স্ট্যাটাস</th>
+                  <th>অ্যাকশন</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: VISUAL CALENDAR -->
+        <!-- ============================================================== -->
+        <div id="tab-calendar" class="admin-tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Interactive Clinic Calendar</h1>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Visual schedule overview. Click on any date to inspect, block slots, or close days.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button class="btn btn-secondary btn-sm" onclick="prevCalendarMonth()">◀ Previous Month</button>
+              <strong id="calendarMonthTitle" style="font-size: 1.1rem; color: var(--primary); min-width: 160px; text-align: center;">Month Year</strong>
+              <button class="btn btn-secondary btn-sm" onclick="nextCalendarMonth()">Next Month ▶</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 1.5rem;">
+            <div id="calendarDaysGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;">
+              <!-- Generated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 4: MANAGE CLINIC AVAILABILITY -->
+        <!-- ============================================================== -->
+        <div id="tab-availability" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Manage Clinic Availability</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+              Full administrative control over booking availability. Close entire dates, block individual hourly slots, and manage regular weekly holidays.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            
+            <!-- Close Entire Date Form -->
+            <div class="card">
+              <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.5rem;">Close an Entire Date</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                When a date is closed, no patient can book any slot on that date, and it appears unavailable on the public booking calendar.
+              </p>
+
+              <form id="closeDayForm">
+                <div class="form-group">
+                  <label class="form-label">Date to Close:</label>
+                  <input type="date" id="closeDateInput" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Reason for Closing (Optional):</label>
+                  <input type="text" id="closeReasonInput" class="form-control" placeholder="e.g. Raqi Traveling / Seminar / Public Holiday">
+                </div>
+                <button type="submit" class="btn btn-primary" style="background-color: #DC2626; border-color: #DC2626;">
+                  Close This Entire Day
+                </button>
+              </form>
+            </div>
+
+            <!-- Block Specific Time Slot Form -->
+            <div class="card">
+              <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.5rem;">Block Specific Time Slot</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Block individual slots (e.g. 10:00 AM – 11:00 AM) on a specific date while keeping other slots available to patients.
+              </p>
+
+              <form id="blockSlotForm">
+                <div class="form-group">
+                  <label class="form-label">Date:</label>
+                  <input type="date" id="blockSlotDateInput" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Time Slot to Block:</label>
+                  <select id="blockSlotSelect" class="form-control" required>
+                    <option value="">-- Choose Slot to Block --</option>
+                    <option value="09:00 AM – 10:00 AM">09:00 AM – 10:00 AM</option>
+                    <option value="10:00 AM – 11:00 AM">10:00 AM – 11:00 AM</option>
+                    <option value="11:00 AM – 12:00 PM">11:00 AM – 12:00 PM</option>
+                    <option value="12:00 PM – 01:00 PM">12:00 PM – 01:00 PM</option>
+                    <option value="02:00 PM – 03:00 PM">02:00 PM – 03:00 PM</option>
+                    <option value="03:00 PM – 04:00 PM">03:00 PM – 04:00 PM</option>
+                    <option value="04:00 PM – 05:00 PM">04:00 PM – 05:00 PM</option>
+                    <option value="05:00 PM – 06:00 PM">05:00 PM – 06:00 PM</option>
+                    <option value="06:00 PM – 07:00 PM">06:00 PM – 07:00 PM</option>
+                    <option value="07:00 PM – 08:00 PM">07:00 PM – 08:00 PM</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Reason for Blocking:</label>
+                  <input type="text" id="blockSlotReasonInput" class="form-control" placeholder="e.g. Staff Consultation / Reserved Case">
+                </div>
+                <button type="submit" class="btn btn-secondary">
+                  Block This Slot
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Weekly Holiday Settings -->
+          <div class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.5rem;">Regular Weekly Holidays</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Set regular weekly holidays when public appointments are disabled automatically.
+            </p>
+            <div style="display: flex; gap: 1rem; align-items: flex-end; max-width: 450px;">
+              <div class="form-group" style="flex: 1; margin: 0;">
+                <label class="form-label">Regular Weekly Holiday Day:</label>
+                <select id="weeklyHolidaySelect" class="form-control">
+                  <option value="5">Friday (Jummah - Default)</option>
+                  <option value="6">Saturday</option>
+                  <option value="0">Sunday</option>
+                </select>
+              </div>
+              <button id="saveHolidaySettingsBtn" class="btn btn-primary">Save Setting</button>
+            </div>
+          </div>
+
+          <!-- Lists of Closed Dates & Blocked Slots -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            
+            <div class="card">
+              <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 1rem;">Currently Closed Dates</h3>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Closed Date</th>
+                      <th>Reason</th>
+                      <th>Closed By</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="closedDatesTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 1rem;">Currently Blocked Slots</h3>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Time Slot</th>
+                      <th>Reason</th>
+                      <th>By</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="blockedSlotsTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 5: PATIENT CRM -->
+        <!-- ============================================================== -->
+        <div id="tab-patients" class="admin-tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Patient Management Database (CRM)</h1>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Structured 10-category medical & spiritual histories, session tracking, and clinical reports.</p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('registerPatientModal')">+ Register New Patient</button>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 1rem; align-items: flex-end;">
+              <div>
+                <label class="form-label" style="font-size: 0.8rem;">Search Patient ID, Name, or Mobile Phone:</label>
+                <input type="text" id="patientSearchInput" class="form-control" placeholder="Search by RSCC-P-..., Name, or Phone...">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.8rem;">Gender Filter:</label>
+                <select id="patientGenderFilter" class="form-control">
+                  <option value="">All Genders</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div>
+                <button class="btn btn-primary" onclick="loadPatientsList()" style="width: 100%;">Search Database</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Patients Table -->
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Patient ID</th>
+                  <th>Full Name</th>
+                  <th>Phone Number</th>
+                  <th>Address</th>
+                  <th>Clinical Status</th>
+                  <th>Registered</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="patientsTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 6: RUQYAH SESSIONS -->
+        <!-- ============================================================== -->
+        <div id="tab-sessions" class="admin-tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Ruqyah Diagnosis & Session Management</h1>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                Clinical recitation protocols, observed physical reactions, professional assessments, and Sunnah remedies.
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openNewSessionForPatient()">+ Record New Ruqyah Session</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Session ID</th>
+                  <th>Patient</th>
+                  <th>Date & Number</th>
+                  <th>Professional Assessment</th>
+                  <th>Next Follow-up</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="sessionsTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 7: FOLLOW-UP TRACKER -->
+        <!-- ============================================================== -->
+        <div id="tab-followups" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Automated Follow-up Management</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+              Track symptom progression over time (improved, unchanged, worsened) and maintain treatment continuity.
+            </p>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Follow-up Date</th>
+                  <th>Patient</th>
+                  <th>Progression</th>
+                  <th>Clinical Summary Notes</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="followupsTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 8: PRICING & SERVICES -->
+        <!-- ============================================================== -->
+        <div id="tab-pricing" class="admin-tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Pricing & Services Management</h1>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                Add services, update prices, set promotional rates, and activate/deactivate services. Synchronized live with public website.
+              </p>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" onclick="openModal('addServiceModal')">+ Add New Service / Package</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Service Name</th>
+                  <th>Category</th>
+                  <th>Duration</th>
+                  <th>Regular Price</th>
+                  <th>Discount Price</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="pricingTableBody">
+                <!-- Dynamically loaded -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 9: PDF REPORTS HUB -->
+        <!-- ============================================================== -->
+        <div id="tab-reports" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">PDF Reports Hub</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+              Generate, print, and download genuine medical-grade PDF reports for patients and archives.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="card" style="border-top: 4px solid var(--primary-light);">
+              <h3 style="color: var(--primary); margin-bottom: 0.5rem;" data-i18n="report_card_1_title">রিপোর্ট টাইপ ১: রোগীর পূর্ণাঙ্গ স্বাস্থ্য ও হিস্ট্রি রিপোর্ট</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;" data-i18n="report_card_1_desc">
+                ক্লিনিক হেডার, রোগী আইডি, ডেমোগ্রাফিক তথ্য, ৯টি ক্যাটাগরির লক্ষণ, শারীরিক সমস্যা, ঘুমের ব্যাঘাত, দুঃস্বপ্ন, ইবাদত পর্যবেক্ষণ ও অফিসিয়াল সিল-স্বাক্ষর অন্তর্ভুক্ত।
+              </p>
+              <div style="margin-bottom: 0.75rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 0.25rem;">রোগী নির্বাচন করুন:</label>
+                <select id="hubPatientSelect" class="form-control" style="font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                  <option value="">-- রোগী নির্বাচন করুন --</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a id="hubPatientDownloadBn" href="#" class="btn btn-primary btn-sm" download style="display: none;">📥 বাংলা PDF ডাউনলোড</a>
+                <a id="hubPatientDownloadEn" href="#" class="btn btn-secondary btn-sm" download style="display: none;">📥 English PDF Download</a>
+                <button class="btn btn-outline-primary btn-sm" onclick="switchTab('patients')">রোগী তালিকা (CRM)</button>
+              </div>
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--accent-gold);">
+              <h3 style="color: var(--primary); margin-bottom: 0.5rem;" data-i18n="report_card_2_title">রিপোর্ট টাইপ ২: রুকইয়াহ শারঈয়্যাহ সেশন রিপোর্ট</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;" data-i18n="report_card_2_desc">
+                সেশন নম্বর, পঠিত কুরআনী আয়াত ও মাসনূন দোয়া, শারীরিক ও মানসিক প্রতিক্রিয়া, রাকির ডায়াগনোস্টিক সিদ্ধান্ত এবং সুন্নাহ চিকিৎসা প্রেসক্রিপশন অন্তর্ভুক্ত।
+              </p>
+              <div style="margin-bottom: 0.75rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 0.25rem;">সেশন নির্বাচন করুন:</label>
+                <select id="hubSessionSelect" class="form-control" style="font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                  <option value="">-- সেশন নির্বাচন করুন --</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a id="hubSessionDownloadBn" href="#" class="btn btn-primary btn-sm" download style="display: none;">📥 বাংলা PDF ডাউনলোড</a>
+                <a id="hubSessionDownloadEn" href="#" class="btn btn-secondary btn-sm" download style="display: none;">📥 English PDF Download</a>
+                <button class="btn btn-outline-accent btn-sm" onclick="switchTab('sessions')">সেশন তালিকা</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 1rem;">Archived Report History</h3>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Report Ref</th>
+                    <th>Report Type</th>
+                    <th>Patient</th>
+                    <th>Generated Date</th>
+                    <th>Downloads</th>
+                  </tr>
+                </thead>
+                <tbody id="reportsTableBody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 10: DIAGNOSIS MANAGEMENT SECTION (9 CATEGORIES & 90 SYMPTOMS) -->
+        <!-- ============================================================== -->
+        <div id="tab-diagnosis" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #064E3B 0%, #047857 100%); color: #FFF; border-radius: var(--radius-lg); padding: 1.75rem 2rem; box-shadow: var(--shadow-md);">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                  <span class="badge" style="background: rgba(255,255,255,0.2); color: #FFF; font-size: 0.75rem; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                    ক্লিনিক্যাল রুকইয়াহ ডায়াগনোসিস সিস্টেম
+                  </span>
+                  <h1 style="color: #FFFFFF; font-size: 1.6rem; margin: 0.25rem 0;" data-i18n="diag_tab_title">
+                    🩺 ৯টি ডায়াগনোসিস ক্যাটাগরি ও ৯০টি উপসর্গ ব্যবস্থাপনা
+                  </h1>
+                  <p style="color: #D1FAE5; font-size: 0.9rem; margin: 0; max-width: 700px;" data-i18n="diag_tab_subtitle">
+                    ক্লিনিক্যাল রুকইয়াহ ডায়াগনোসিসের জন্য নির্ধারিত ৯টি ক্যাটাগরি এবং প্রতি ক্যাটাগরিতে ১০টি করে মোট ৯০টি উপসর্গের দ্বৈত-ভাষিক (বাংলা ও ইংরেজি) ব্যবস্থাপনা।
+                  </p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                  <button class="btn btn-primary" onclick="openAddSymptomModal()" style="background: #FFFFFF; color: #064E3B; font-weight: 700; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                    + নতুন উপসর্গ যোগ করুন
+                  </button>
+                  <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; text-align: center;">
+                    <div style="font-size: 1.75rem; font-weight: 800; line-height: 1;" id="diagStatCatsCount">9</div>
+                    <div style="font-size: 0.75rem; color: #A7F3D0; text-transform: uppercase; margin-top: 4px;" data-i18n="diag_stat_categories">ক্যাটাগরি</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; text-align: center;">
+                    <div style="font-size: 1.75rem; font-weight: 800; line-height: 1;" id="diagStatSymsCount">92</div>
+                    <div style="font-size: 0.75rem; color: #A7F3D0; text-transform: uppercase; margin-top: 4px;" data-i18n="diag_stat_symptoms">সক্রিয় উপসর্গ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diagnosis Categories & Symptoms List Container -->
+          <div id="diagnosisCategoriesContainer">
+            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+              ডায়াগনোসিস ক্যাটাগরি ও উপসর্গ লোড হচ্ছে...
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 11: CASE STUDIES & ARTICLES MANAGEMENT -->
+        <!-- ============================================================== -->
+        <div id="tab-articles" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #0F5132 0%, #15803D 100%); color: #FFF; border-radius: var(--radius-lg); padding: 1.75rem 2rem; box-shadow: var(--shadow-md);">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                  <span class="badge" style="background: rgba(255,255,255,0.2); color: #FFF; font-size: 0.75rem; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                    শিক্ষণীয় কেস হিস্ট্রি ও ব্লগ পাবলিকেশন
+                  </span>
+                  <h1 style="color: #FFFFFF; font-size: 1.6rem; margin: 0.25rem 0;">
+                    📚 রোগীর কেস হিস্ট্রি ও আর্টিকেল ব্যবস্থাপনা
+                  </h1>
+                  <p style="color: #D1FAE5; font-size: 0.9rem; margin: 0; max-width: 700px;">
+                    কুরআন ও সুন্নাহ ভিত্তিক রুকইয়াহ আরোগ্য বিবরণী এবং সাধারণ রোগীদের সচেতনতামূলক কেস স্টাডি পরিচালনা ও দ্বৈত ভাষায় প্রকাশনা।
+                  </p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                  <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; text-align: center;">
+                    <div style="font-size: 1.75rem; font-weight: 800; line-height: 1;" id="statArticlesTotal">0</div>
+                    <div style="font-size: 0.75rem; color: #A7F3D0; text-transform: uppercase; margin-top: 4px;">মোট কেস / আর্টিকেল</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: var(--radius-md); padding: 0.75rem 1.25rem; text-align: center;">
+                    <div style="font-size: 1.75rem; font-weight: 800; line-height: 1;" id="statArticlesPublished">0</div>
+                    <div style="font-size: 0.75rem; color: #A7F3D0; text-transform: uppercase; margin-top: 4px;">প্রকাশিত (Published)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Patient Anonymity & Privacy Alert -->
+          <div style="background: #FFFBEB; border: 1px solid #FCD34D; border-left: 5px solid #F59E0B; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <span style="font-size: 1.5rem; line-height: 1;">🛡️</span>
+            <div>
+              <strong style="color: #92400E; font-size: 0.95rem;">রোগীর পূর্ণাঙ্গ গোপনীয়তা রক্ষা ও শরয়ী নীতিমালা:</strong>
+              <p style="color: #B45309; font-size: 0.85rem; margin: 0.25rem 0 0; line-height: 1.5;">
+                শিক্ষণীয় উদ্দেশ্যে প্রকাশিত কেস স্টাডিতে কোনো অবস্থাতেই রোগীর আসল নাম, ফোন নম্বর, এনআইডি নম্বর, সুনির্দিষ্ট বাড়ির ঠিকানা বা ব্যক্তিগত পরিচয় প্রকাশ করা সম্পূর্ণ নিষিদ্ধ। রোগীর পরিচয় সর্বদা উহ্য ও কাল্পনিক কোড (যেমন: রোগী ১ / Patient A) হিসেবে উল্লেখ করুন।
+              </p>
+            </div>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; flex: 1;">
+                <input type="text" id="articleSearchInput" class="form-control" style="max-width: 320px;" placeholder="🔍 শিরোনাম বা সারসংক্ষেপ খুঁজুন..." oninput="filterArticlesList()">
+                <select id="articleStatusFilter" class="form-control" style="max-width: 180px;" onchange="loadArticlesList()">
+                  <option value="all">সকল স্ট্যাটাস (All)</option>
+                  <option value="published">প্রকাশিত (Published)</option>
+                  <option value="draft">ড্রাফট (Draft)</option>
+                </select>
+              </div>
+              <div>
+                <button type="button" class="btn btn-primary" onclick="openArticleModal()">
+                  ➕ নতুন কেস হিস্ট্রি / আর্টিকেল যোগ করুন
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Articles Table Container -->
+          <div class="card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 70px;">ছবি</th>
+                    <th>শিরোনাম (বাংলা ও ইংরেজি)</th>
+                    <th>ক্যাটাগরি</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>প্রকাশের তারিখ</th>
+                    <th style="text-align: right;">অ্যাকশন</th>
+                  </tr>
+                </thead>
+                <tbody id="articlesTableBody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                      লোড হচ্ছে...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 12: CLINIC SETTINGS -->
+        <!-- ============================================================== -->
+        <div id="tab-settings" class="admin-tab-content">
+          <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.5rem; color: var(--text-main); margin: 0;">Clinic Settings & Audit Controls</h1>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+              Manage business contact information, change administrator password, export database backup, and review audit trail.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; margin-bottom: 2rem;">
+            
+            <!-- Clinic Profile Form -->
+            <div class="card">
+              <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 1rem;">Clinic Profile & Contact Settings</h3>
+              <form id="clinicSettingsForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                  <div class="form-group">
+                    <label class="form-label">Business Name:</label>
+                    <input type="text" id="settingsBusinessName" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Branch Name:</label>
+                    <input type="text" id="settingsBranchName" class="form-control" required>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                  <div class="form-group">
+                    <label class="form-label">Lead Raqi Name:</label>
+                    <input type="text" id="settingsRaqiName" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Phone Number:</label>
+                    <input type="text" id="settingsPhone" class="form-control" required>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                  <div class="form-group">
+                    <label class="form-label">WhatsApp Number:</label>
+                    <input type="text" id="settingsWhatsapp" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Official Email:</label>
+                    <input type="email" id="settingsEmail" class="form-control">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Address:</label>
+                  <input type="text" id="settingsAddress" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Hours & Schedule Description:</label>
+                  <textarea id="settingsHours" class="form-control" rows="2"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile Settings</button>
+              </form>
+            </div>
+
+            <!-- Password & Backup -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+              
+              <!-- Change Password -->
+              <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.75rem;">Security: Change Password</h3>
+                <form id="changePasswordForm">
+                  <div class="form-group">
+                    <label class="form-label">Current Password:</label>
+                    <input type="password" id="currentPasswordInput" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">New Password:</label>
+                    <input type="password" id="newPasswordInput" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Confirm New Password:</label>
+                    <input type="password" id="confirmPasswordInput" class="form-control" required>
+                  </div>
+                  <button type="submit" class="btn btn-secondary" style="width: 100%;">Update Password</button>
+                </form>
+              </div>
+
+              <!-- Database Backup Export -->
+              <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.5rem;">Database Backup</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                  Export full JSON snapshot of all patients, medical histories, appointments, sessions, and settings.
+                </p>
+                <a href="/api/admin/settings/backup" class="btn btn-outline-primary" style="width: 100%; text-align: center;">
+                  📥 Download Full Database Backup (.json)
+                </a>
+              </div>
+
+              <!-- Official Clinic Logo Management Card -->
+              <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.5rem;">Official Clinic Logo</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                  Upload or update the official clinic logo displayed across headers, footers, and PDF reports.
+                </p>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem; text-align: center; margin-bottom: 1rem;">
+                  <img id="settingsLogoPreview" src="/images/logo.png" alt="Clinic Logo" style="max-height: 80px; max-width: 180px; object-fit: contain; display: block; margin: 0 auto;">
+                  <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.5rem;">Current Active Logo</div>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <input type="file" id="settingsLogoInput" accept="image/*" class="form-control" style="font-size: 0.85rem;">
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" style="width: 100%;" onclick="uploadClinicLogo()">
+                  📤 লোগো আপলোড ও সংরক্ষণ করুন (Upload Logo)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audit Log Trail -->
+          <div class="card">
+            <h3 style="color: var(--primary); font-size: 1.15rem; margin-bottom: 0.75rem;">Administrative Action Audit Logs</h3>
+            <div id="auditLogsContainer" style="max-height: 250px; overflow-y: auto; background: var(--bg-page); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+              Loading audit records...
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: APPOINTMENT DETAIL & STATUS -->
+  <!-- ============================================================== -->
+  <div id="aptDetailModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_apt_detail_title">অ্যাপয়েন্টমেন্ট পরিচালনা</h3>
+        <button class="modal-close" onclick="closeModal('aptDetailModal')">✕</button>
+      </div>
+      <div class="modal-body" id="aptDetailModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: RESCHEDULE APPOINTMENT -->
+  <!-- ============================================================== -->
+  <div id="rescheduleModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_reschedule_title">অ্যাপয়েন্টমেন্টের সময় পরিবর্তন</h3>
+        <button class="modal-close" onclick="closeModal('rescheduleModal')">✕</button>
+      </div>
+      <div class="modal-body" id="rescheduleModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: CALENDAR DAY VIEW -->
+  <!-- ============================================================== -->
+  <div id="calendarDayModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_cal_day_title">দৈনিক সময়সূচী ও স্লট তদারকি</h3>
+        <button class="modal-close" onclick="closeModal('calendarDayModal')">✕</button>
+      </div>
+      <div class="modal-body" id="calendarDayModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: REGISTER NEW PATIENT -->
+  <!-- ============================================================== -->
+  <div id="registerPatientModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="reg_modal_title">নতুন রোগী নিবন্ধন</h3>
+        <button class="modal-close" onclick="closeModal('registerPatientModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="registerPatientForm">
+          <div class="form-group">
+            <label class="form-label" data-i18n="reg_name_label">রোগীর পূর্ণ নাম *</label>
+            <input type="text" id="regPatientName" class="form-control" required data-i18n-placeholder="reg_name_ph" placeholder="যেমন: মো: তারিকুল ইসলাম">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label" data-i18n="reg_phone_label">মোবাইল নম্বর *</label>
+              <input type="tel" id="regPatientPhone" class="form-control" required data-i18n-placeholder="reg_phone_ph" placeholder="01XXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="reg_age_label">আনুমানিক বয়স *</label>
+              <input type="number" id="regPatientAge" class="form-control" value="30" required>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label" data-i18n="reg_gender_label">লিঙ্গ *</label>
+              <select id="regPatientGender" class="form-control">
+                <option value="Male" data-i18n="reg_gender_male">পুরুষ</option>
+                <option value="Female" data-i18n="reg_gender_female">মহিলা</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="reg_marital_label">বৈবাহিক অবস্থা</label>
+              <select id="regPatientMarital" class="form-control">
+                <option value="Married" data-i18n="reg_marital_married">বিবাহিত</option>
+                <option value="Single" data-i18n="reg_marital_single">অবিবাহিত</option>
+                <option value="Widowed" data-i18n="reg_marital_widowed">বিধবা / বিপত্নীক</option>
+                <option value="Divorced" data-i18n="reg_marital_divorced">তালাকপ্রাপ্ত</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="reg_address_label">বাসস্থানের পূর্ণ ঠিকানা *</label>
+            <input type="text" id="regPatientAddress" class="form-control" required data-i18n-placeholder="reg_address_ph" placeholder="গ্রাম/মহল্লা, থানা/উপজেলা, জেলা">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="reg_emergency_label">জরুরি যোগাযোগ (নাম ও ফোন নম্বর)</label>
+            <input type="text" id="regPatientEmergency" class="form-control" data-i18n-placeholder="reg_emergency_ph" placeholder="যেমন: ভাই: ০১৮XXXXXXXX">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="reg_notes_label">প্রাথমিক রিসেপশন নোটস</label>
+            <textarea id="regPatientNotes" class="form-control" rows="2" data-i18n-placeholder="reg_notes_ph" placeholder="রোগীর প্রধান সমস্যা, কে রেফার করেছেন ইত্যাদি..."></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('registerPatientModal')" data-i18n="reg_btn_cancel">বাতিল</button>
+            <button type="submit" class="btn btn-primary" data-i18n="reg_btn_save">💾 সংরক্ষণ ও রোগী আইডি তৈরি করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: PATIENT PROFILE DOSSIER (10-CATEGORY HISTORY) -->
+  <!-- ============================================================== -->
+  <div id="patientProfileModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 880px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_patient_profile_title">রোগীর পূর্ণাঙ্গ ফাইল ও ক্লিনিক্যাল CRM</h3>
+        <button class="modal-close" onclick="closeModal('patientProfileModal')">✕</button>
+      </div>
+      <div class="modal-body" id="patientProfileModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 6: RECORD NEW RUQYAH SESSION -->
+  <!-- ============================================================== -->
+  <div id="newSessionModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 850px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="session_modal_title">রুকইয়াহ তিলাওয়াত ও ডায়াগনস্টিক সেশন রেকর্ড</h3>
+        <button class="modal-close" onclick="closeModal('newSessionModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="newSessionForm">
+          <input type="hidden" id="editingSessionId" value="">
+          
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" data-i18n="session_select_patient">রোগী নির্বাচন করুন *</label>
+              <select id="newSessionPatientSelect" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="session_date">সেশনের তারিখ *</label>
+              <input type="date" id="newSessionDate" class="form-control" required>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label" data-i18n="session_raqi_name">চিকিৎসক / রাক্বী:</label>
+              <input type="text" id="newSessionRaqiName" class="form-control" value="মুহাম্মদুল্লাহ মিয়া">
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="session_medical_history">ডাক্তারি হিস্ট্রি যাচাই:</label>
+              <input type="text" id="newSessionMedicalHistory" class="form-control" data-i18n-placeholder="session_medical_history_ph" placeholder="যেমন: ইসিজি নরমাল, শারীরিক কোনো প্যাথলজি নেই">
+            </div>
+          </div>
+
+          <!-- Section 1: Patient's Main Symptoms -->
+          <div class="card" style="margin-bottom: 1.25rem; border-left: 4px solid var(--primary);">
+            <h4 style="color: var(--primary); margin-bottom: 0.4rem;" data-i18n="session_main_symptoms_heading">রোগীর প্রধান উপসর্গসমূহ:</h4>
+            <div class="form-group" style="margin-bottom: 0;">
+              <textarea id="newSessionMainSymptoms" class="form-control" rows="2" data-i18n-placeholder="session_main_symptoms_ph" placeholder="রোগীর প্রধান প্রধান উপসর্গ ও লক্ষণসমূহ লিখুন..."></textarea>
+            </div>
+          </div>
+
+          <!-- Section 2: Patient's Physical Condition During Recitation -->
+          <div class="card" style="margin-bottom: 1.25rem; border-left: 4px solid var(--accent-gold);">
+            <h4 style="color: var(--accent-gold); margin-bottom: 0.4rem;" data-i18n="session_physical_condition_heading">তেলাওয়াত চলাকালীন রোগীর শারীরিক অবস্থা</h4>
+            <div class="chip-group" id="sessionReactionsChipGroup">
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Trembling / involuntary shivering in limbs"><span data-i18n="session_react_trembling">অঙ্গপ্রত্যঙ্গে কাঁপুনি বা কম্পন</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Deep repeated yawning"><span data-i18n="session_react_yawning">বারবার গভীর হাই তোলা</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Profuse cold sweating"><span data-i18n="session_react_sweating">শরীর ঠান্ডা হয়ে ঘাম বের হওয়া</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Sudden weeping / tears without grief"><span data-i18n="session_react_weeping">অকারণে হঠাৎ কান্না বা অশ্রুপাত</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Nausea / urge to vomit"><span data-i18n="session_react_nausea">বমি বমি ভাব বা বমির তীব্র বেগ</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Vocal alteration / involuntary speech"><span data-i18n="session_react_vocal">কণ্ঠস্বরের পরিবর্তন বা অনৈচ্ছিক কথা</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Rapid heart palpitations"><span data-i18n="session_react_palpitations">হৃদস্পন্দন দ্রুত হওয়া বা ধড়ফড়</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Temporary numbness or paralysis in hands/feet"><span data-i18n="session_react_numbness">হাত-পায়ে অবশ ভাব বা অসাড়তা</span></label>
+              <label class="chip-label"><input type="checkbox" name="observed_reactions" value="Calmness / no adverse physical reaction"><span data-i18n="session_react_calmness">স্বাভাবিক বা কোনো অস্বাভাবিক প্রতিক্রিয়া নেই</span></label>
+            </div>
+            <div class="form-group" style="margin-top: 0.85rem; margin-bottom: 0;">
+              <label class="form-label" data-i18n="session_physical_obs_label">অতিরিক্ত পর্যবেক্ষণ ও মন্তব্য (ঐচ্ছিক):</label>
+              <textarea id="newSessionPhysicalObservations" class="form-control" rows="2" data-i18n-placeholder="session_physical_obs_ph" placeholder="তেলাওয়াতকালে রোগীর অন্যান্য বিশেষ শারীরিক লক্ষণ বা পর্যবেক্ষণ লিখুন..."></textarea>
+            </div>
+          </div>
+
+          <!-- Section 3: Raqi's Preliminary Diagnosis -->
+          <div class="card" style="margin-bottom: 1.25rem; border-left: 4px solid var(--primary-light);">
+            <h4 style="color: var(--primary); margin-bottom: 0.4rem;" data-i18n="session_manual_diagnosis_heading">রাকীর প্রাথমিক ডায়াগনোসিস</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;" data-i18n="session_manual_diagnosis_sub">
+              রাক্বী নিজে পর্যবেক্ষণ অনুযায়ী এক বা একাধিক ডায়াগনোসিস নির্বাচন করবেন (স্বয়ংক্রিয় নয়):
+            </p>
+            <div class="chip-group" id="sessionManualDiagnosisGroup">
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="আইন (Ayn)"><span data-i18n="diag_opt_ayn">আইন (Ayn)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="হাসাদ (Hasad)"><span data-i18n="diag_opt_hasad">হাসাদ (Hasad)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="সেহের (Sihr)"><span data-i18n="diag_opt_sihr">সেহের (Sihr)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="জ্বিনের প্রভাব (Jinn Influence)"><span data-i18n="diag_opt_jinn">জ্বিনের প্রভাব (Jinn Influence)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="আইন + হাসাদ"><span data-i18n="diag_opt_ayn_hasad">আইন + হাসাদ</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="আইন + সেহের"><span data-i18n="diag_opt_ayn_sihr">আইন + সেহের</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="হাসাদ + সেহের"><span data-i18n="diag_opt_hasad_sihr">হাসাদ + সেহের</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="জ্বিন + সেহের"><span data-i18n="diag_opt_jinn_sihr">জ্বিন + সেহের</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="একাধিক সমস্যা (Multiple)"><span data-i18n="diag_opt_multiple">একাধিক সমস্যা (Multiple)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="নরমাল / নির্দিষ্ট কোনো লক্ষণ শনাক্ত হয়নি (Normal)"><span data-i18n="diag_opt_normal">নরমাল / নির্দিষ্ট কোনো লক্ষণ শনাক্ত হয়নি (Normal)</span></label>
+              <label class="chip-label"><input type="checkbox" name="manual_diagnosis" value="অন্যান্য (Other)"><span data-i18n="diag_opt_other">অন্যান্য (Other)</span></label>
+            </div>
+          </div>
+
+          <!-- Section 4: Prescribed Amal -->
+          <div class="card" style="margin-bottom: 1.25rem;">
+            <h4 style="color: var(--primary); margin-bottom: 0.4rem;" data-i18n="session_prescribed_amal_heading">প্রেসক্রাইবকৃত আমল</h4>
+            <div class="form-group" style="margin-bottom: 0;">
+              <textarea id="newSessionPrescribedAmal" class="form-control" rows="4" data-i18n-placeholder="session_prescribed_amal_ph" placeholder="রোগীর জন্য নির্দিষ্ট প্রেসক্রাইবকৃত আমল, দোয়া ও নিয়মাবলী এখানে লিখুন..."></textarea>
+            </div>
+          </div>
+
+          <!-- Section 5: Raqi's Comments -->
+          <div class="card" style="margin-bottom: 1.25rem;">
+            <h4 style="color: var(--primary); margin-bottom: 0.4rem;" data-i18n="session_raqi_comments_heading">রাকীর মন্তব্য</h4>
+            <div class="form-group" style="margin-bottom: 0;">
+              <textarea id="newSessionRaqiComments" class="form-control" rows="3" data-i18n-placeholder="session_raqi_comments_ph" placeholder="রোগীর অবস্থা, ক্লিনিক্যাল পর্যবেক্ষণ ও ব্যক্তিগত মন্তব্য লিখুন..."></textarea>
+            </div>
+          </div>
+
+          <!-- Section 6: Special Advice -->
+          <div class="card" style="margin-bottom: 1.25rem;">
+            <h4 style="color: var(--primary); margin-bottom: 0.4rem;" data-i18n="session_special_advice_heading">বিশেষ নসিহত</h4>
+            <div class="form-group" style="margin-bottom: 0;">
+              <textarea id="newSessionSpecialAdvice" class="form-control" rows="3" data-i18n-placeholder="session_special_advice_ph" placeholder="রোগী ও পরিবারের জন্য বিশেষ নসিহত, নির্দেশনা ও সতর্কতা লিখুন..."></textarea>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" data-i18n="session_followup_label">পরবর্তী ফলো-আপের তারিখ (ঐচ্ছিক):</label>
+              <input type="date" id="newSessionFollowupDate" class="form-control">
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('newSessionModal')" data-i18n="session_btn_cancel">বাতিল</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveSession" data-i18n="session_btn_save">💾 সেশন সংরক্ষণ ও রিপোর্ট তৈরি করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 7: FOLLOW-UP PROGRESS UPDATE -->
+  <!-- ============================================================== -->
+  <div id="followupModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_followup_title">ফলো-আপ অগ্রগতি হালনাগাদ</h3>
+        <button class="modal-close" onclick="closeModal('followupModal')">✕</button>
+      </div>
+      <div class="modal-body" id="followupModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 8: ADD NEW SERVICE -->
+  <!-- ============================================================== -->
+  <div id="addServiceModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_add_service_title">নতুন সেবা / প্যাকেজ যোগ করুন</h3>
+        <button class="modal-close" onclick="closeModal('addServiceModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addServiceForm">
+          <div class="form-group">
+            <label class="form-label">সেবার নাম *</label>
+            <input type="text" id="addServiceName" class="form-control" required placeholder="যেমন: বিশেষ রুকইয়াহ সেশন">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ক্যাটাগরি *</label>
+            <select id="addServiceCategory" class="form-control" required>
+              <option value="ruqyah">রুকইয়াহ শারঈয়্যাহ</option>
+              <option value="hijama">সুন্নাতী হিজামা</option>
+              <option value="consultation">পরামর্শ ও ডায়াগনোসিস</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">নির্ধারিত মূল্য (৳) *</label>
+              <input type="number" id="addServicePrice" class="form-control" required placeholder="2050">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ডিসকাউন্ট মূল্য (৳)</label>
+              <input type="number" id="addServiceDiscount" class="form-control" placeholder="ঐচ্ছিক">
+            </div>
+            <div class="form-group">
+              <label class="form-label">সময়কাল (মিনিট) *</label>
+              <input type="number" id="addServiceDuration" class="form-control" value="60" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">সেবার বিবরণ</label>
+            <textarea id="addServiceDesc" class="form-control" rows="2" placeholder="ওয়েবসাইটে প্রদর্শিত সেবার পূর্ণ বিবরণ..."></textarea>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')" data-i18n="btn_cancel">বাতিল</button>
+            <button type="submit" class="btn btn-primary" data-i18n="btn_save">সেবা তৈরি করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 9: EDIT SERVICE -->
+  <!-- ============================================================== -->
+  <div id="editServiceModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);" data-i18n="modal_edit_service_title">সেবার বিবরণ ও ফি সম্পাদনা</h3>
+        <button class="modal-close" onclick="closeModal('editServiceModal')">✕</button>
+      </div>
+      <div class="modal-body" id="editServiceModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 10: EDIT DIAGNOSIS CATEGORY -->
+  <!-- ============================================================== -->
+  <div id="editCategoryModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);">ডায়াগনোসিস ক্যাটাগরি সম্পাদনা</h3>
+        <button class="modal-close" onclick="closeModal('editCategoryModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="editCategoryForm" onsubmit="saveCategoryEdit(event)">
+          <input type="hidden" id="editCatId">
+          <div class="form-group">
+            <label class="form-label">ক্যাটাগরির নাম (বাংলা):</label>
+            <input type="text" id="editCatNameBn" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category Name (English):</label>
+            <input type="text" id="editCatNameEn" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">ক্যাটাগরি বিবরণ (বাংলা):</label>
+            <textarea id="editCatDescBn" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category Description (English):</label>
+            <textarea id="editCatDescEn" class="form-control" rows="2"></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">ক্রম / Sort Order:</label>
+              <input type="number" id="editCatSort" class="form-control" min="1" max="99">
+            </div>
+            <div class="form-group">
+              <label class="form-label">স্ট্যাটাস:</label>
+              <select id="editCatStatus" class="form-control">
+                <option value="active">সক্রিয় (Active)</option>
+                <option value="inactive">নিষ্ক্রিয় (Inactive)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('editCategoryModal')">বাতিল</button>
+            <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 11: EDIT DIAGNOSIS SYMPTOM -->
+  <!-- ============================================================== -->
+  <div id="editSymptomModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);">উপসর্গ সম্পাদনা (Edit Symptom)</h3>
+        <button class="modal-close" onclick="closeModal('editSymptomModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="editSymptomForm" onsubmit="saveSymptomEdit(event)">
+          <input type="hidden" id="editSymId">
+          <div class="form-group">
+            <label class="form-label">ক্যাটাগরি নির্ধারণ (Assign Category):</label>
+            <select id="editSymCategory" class="form-control" required>
+              <!-- Populated dynamically with all 9 categories -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">উপসর্গের বিবরণ (বাংলা):</label>
+            <textarea id="editSymBn" class="form-control" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Symptom Description (English):</label>
+            <textarea id="editSymEn" class="form-control" rows="3" required></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">ক্রম / Sort Order:</label>
+              <input type="number" id="editSymSort" class="form-control" min="1" max="99">
+            </div>
+            <div class="form-group">
+              <label class="form-label">স্ট্যাটাস:</label>
+              <select id="editSymStatus" class="form-control">
+                <option value="active">সক্রিয় (Active)</option>
+                <option value="inactive">নিষ্ক্রিয় (Inactive)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('editSymptomModal')">বাতিল</button>
+            <button type="submit" class="btn btn-primary">সংরক্ষণ করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 12: ADD NEW DIAGNOSIS SYMPTOM -->
+  <!-- ============================================================== -->
+  <div id="addSymptomModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 style="margin: 0; color: var(--primary);">+ নতুন উপসর্গ যোগ করুন (Add New Symptom)</h3>
+        <button class="modal-close" onclick="closeModal('addSymptomModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addSymptomForm" onsubmit="saveNewSymptom(event)">
+          <div class="form-group">
+            <label class="form-label">ক্যাটাগরি নির্বাচন করুন (Select Category):</label>
+            <select id="addSymCategory" class="form-control" required>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">উপসর্গের নাম / বিবরণ (বাংলা):</label>
+            <textarea id="addSymBn" class="form-control" rows="3" placeholder="উপসর্গের পূর্ণ বিবরণ বাংলায় লিখুন..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Symptom Name / Description (English):</label>
+            <textarea id="addSymEn" class="form-control" rows="3" placeholder="Write the English translation here..."></textarea>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">ক্রম / Sort Order:</label>
+              <input type="number" id="addSymSort" class="form-control" min="1" max="99" value="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label">স্ট্যাটাস:</label>
+              <select id="addSymStatus" class="form-control">
+                <option value="active" selected>সক্রিয় (Active)</option>
+                <option value="inactive">নিষ্ক্রিয় (Inactive)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('addSymptomModal')">বাতিল</button>
+            <button type="submit" class="btn btn-primary">+ উপসর্গ যুক্ত করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 12: CREATE / EDIT ARTICLE & CASE HISTORY -->
+  <!-- ============================================================== -->
+  <div id="articleModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 880px;">
+      <div class="modal-header">
+        <h3 id="articleModalTitle" style="margin: 0; color: var(--primary);">নতুন কেস হিস্ট্রি / আর্টিকেল তৈরি করুন</h3>
+        <button class="modal-close" onclick="closeModal('articleModal')">✕</button>
+      </div>
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+        
+        <!-- Privacy Notice -->
+        <div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.85rem; color: #92400E; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🛡️</span>
+          <div><strong>জরুরি সতর্কতা:</strong> রোগীর পরিচয় সম্পূর্ণ গোপন রাখুন। কোনো ফোন নম্বর, জাতীয় পরিচয়পত্র বা বাস্তব নাম প্রকাশ করা যাবে না।</div>
+        </div>
+
+        <form id="articleForm" onsubmit="saveArticle(event)">
+          <input type="hidden" id="articleId">
+
+          <!-- Row 1: Titles -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">শিরোনাম (বাংলা) *</label>
+              <input type="text" id="articleTitleBn" class="form-control" required placeholder="যেমন: কেস স্টাডি: পেটের তীব্র সমস্যা থেকে আরোগ্য">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input type="text" id="articleTitleEn" class="form-control" required placeholder="e.g. Case Study: Recovery from Ingested Sihr">
+            </div>
+          </div>
+
+          <!-- Row 2: Slugs -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">স্লাগ / URL Slug (বাংলা) <small style="color: var(--text-muted);">(খালি রাখলে স্বয়ংক্রিয় তৈরি হবে)</small></label>
+              <input type="text" id="articleSlugBn" class="form-control" placeholder="case-01-stomach-sihr">
+            </div>
+            <div class="form-group">
+              <label class="form-label">URL Slug (English) <small style="color: var(--text-muted);">(Auto-generated if empty)</small></label>
+              <input type="text" id="articleSlugEn" class="form-control" placeholder="case-01-stomach-sihr-en">
+            </div>
+          </div>
+
+          <!-- Row 3: Categories & Status -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">ক্যাটাগরি (বাংলা):</label>
+              <input type="text" id="articleCategoryBn" class="form-control" value="সিহর ও রুকইয়াহ চিকিৎসা">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category (English):</label>
+              <input type="text" id="articleCategoryEn" class="form-control" value="Sihr & Ruqyah Treatment">
+            </div>
+            <div class="form-group">
+              <label class="form-label">স্ট্যাটাস / Status:</label>
+              <select id="articleStatus" class="form-control">
+                <option value="published">প্রকাশিত (Published)</option>
+                <option value="draft">ড্রাফট (Draft)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 4: Author & Featured Image -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">লেখক / Raqi Name:</label>
+              <input type="text" id="articleAuthor" class="form-control" value="মুহাম্মদুল্লাহ মিয়াহ (Muhammadullah Miah)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ফিচার্ড ছবি / Featured Image URL:</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="articleFeaturedImage" class="form-control" value="/images/articles/default-case.jpg">
+                <label class="btn btn-secondary btn-sm" style="white-space: nowrap; cursor: pointer; display: flex; align-items: center;">
+                  📁 আপলোড
+                  <input type="file" id="articleImageUploadInput" accept="image/*" style="display: none;" onchange="uploadArticleImage(event)">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Excerpts -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">সংক্ষিপ্ত সারসংক্ষেপ (বাংলা):</label>
+              <textarea id="articleExcerptBn" class="form-control" rows="2" placeholder="সংক্ষিপ্ত ২-৩ লাইনের বিবরণ..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Short Excerpt (English):</label>
+              <textarea id="articleExcerptEn" class="form-control" rows="2" placeholder="Brief 2-3 line summary..."></textarea>
+            </div>
+          </div>
+
+          <!-- Row 6: Content (BN) -->
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">পূর্ণাঙ্গ বিবরণ ও প্রেসক্রিপশন (বাংলা) *</label>
+            <textarea id="articleContentBn" class="form-control" rows="8" required placeholder="রোগীর পটভূমি, ডায়াগনোসিস, লক্ষণসমূহ, প্রদত্ত রুকইয়াহ এবং ফলাফল বিস্তারিত লিখুন..."></textarea>
+          </div>
+
+          <!-- Row 7: Content (EN) -->
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Full Clinical Case Description (English):</label>
+            <textarea id="articleContentEn" class="form-control" rows="6" placeholder="Patient background, diagnosis, symptoms observed, treatment protocol, and clinical outcome..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #E2E8F0; padding-top: 1rem;">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('articleModal')">বাতিল</button>
+            <button type="submit" class="btn btn-primary">সংরক্ষণ ও প্রকাশ করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/translations.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

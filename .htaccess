@@ -1,0 +1,11 @@
+# Apache / Phusion Passenger Configuration for Hostinger
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # If the requested file or directory exists, serve it directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Forward all other requests to the Node.js application running on PORT
+    RewriteRule ^(.*)$ http://127.0.0.1:5000/$1 [P,L]
+</IfModule>

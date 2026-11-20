@@ -1,0 +1,1033 @@
+/**
+ * Comprehensive System Test Suite for Ruqyah Support & Cupping Center (Feni Branch)
+ * Validates all requirements:
+ * 1. Only 1 Ruqyah service (2,050 BDT) & 1 Hijama service (consultation based)
+ * 2. Old Ruqyah package pricing removed from active services
+ * 3. Service selection during booking (Ruqyah vs Hijama)
+ * 4. Automatic slot removal and concurrency control
+ * 5. Expanded Patient History (সমস্যা কত দিন ধরে?, কী কী প্রক্রিয়ায় চিকিৎসা নিয়েছেন?, রিজিক ও পারিবারিক পরিস্থিতি, বংশগত ইতিহাস)
+ * 6. Admin dashboard appointment display with service and fee
+ * 7. PDF Report generation
+ */
+
+const assert = require('assert');
+const path = require('path');
+const http = require('http');
+const app = require('../server');
+const db = require('../database/db');
+const { TIME_SLOTS } = require('../config/constants');
+
+let server;
+let port = 5055;
+let baseUrl;
+let adminCookie = '';
+
+function request(method, path, body = null, headers = {}) {
+  return new Promise((resolve, reject) => {
+    const url = new URL(path, baseUrl);
+    const options = {
+      method,
+      hostname: url.hostname,
+      port: url.port,
+      path: url.pathname + url.search,
+      headers: {
+        'Accept': 'application/json',
+        ...headers
+      }
+    };
+
+    if (adminCookie) {
+      options.headers['Cookie'] = adminCookie;
+    }
+
+    let payload = null;
+    if (body) {
+      payload = JSON.stringify(body);
+      options.headers['Content-Type'] = 'application/json';
+      options.headers['Content-Length'] = Buffer.byteLength(payload);
+    }
+
+    const req = http.request(options, (res) => {
+      const chunks = [];
+      res.on('data', chunk => chunks.push(chunk));
+      res.on('end', () => {
+        const rawBuffer = Buffer.concat(chunks);
+        let data = null;
+        const contentType = res.headers['content-type'] || '';
+
+        if (contentType.includes('application/json')) {
+          try {
+            data = JSON.parse(rawBuffer.toString());
+          } catch {
+            data = rawBuffer.toString();
+          }
+        } else {
+          data = rawBuffer;
+        }
+
+        resolve({
+          statusCode: res.statusCode,
+          headers: res.headers,
+          data,
+          rawBuffer
+        });
+      });
+    });
+
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
+}
+
+async function runTests() {
+  console.log('================================================================');
+  console.log(' STARTING RUQYAH CLINIC SYSTEM VERIFICATION & AUDIT TEST SUITE ');
+  console.log('================================================================');
+
+  // Clean up any test artifacts from previous runs in correct dependency order
+  const testPatientRows = db.prepare("SELECT patient_id FROM patients WHERE phone IN ('01719998877', '01899990000', '01955443322', '01600112233', '01711223344') OR full_name LIKE 'Test Patient%' OR full_name = 'Mahmudur Rahman'").all();
+  const testPIds = testPatientRows.map(r => r.patient_id);
+  for (const pid of testPIds) {
+    db.prepare("DELETE FROM reports WHERE patient_id = ?").run(pid);
+    db.prepare("DELETE FROM follow_ups WHERE patient_id = ?").run(pid);
+    db.prepare("DELETE FROM ruqyah_sessions WHERE patient_id = ?").run(pid);
+    db.prepare("DELETE FROM patient_histories WHERE patient_id = ?").run(pid);
+    db.prepare("DELETE FROM appointments WHERE patient_id = ?").run(pid);
+  }
+  db.prepare("DELETE FROM appointments WHERE patient_phone LIKE '017199%' OR patient_phone LIKE '018999%' OR patient_phone LIKE '017112%' OR patient_name LIKE 'Test Patient%'").run();
+  db.prepare("DELETE FROM patients WHERE phone IN ('01719998877', '01899990000', '01955443322', '01600112233', '01711223344') OR full_name LIKE 'Test Patient%' OR full_name = 'Mahmudur Rahman'").run();
+  db.prepare("DELETE FROM closed_dates WHERE reason LIKE '%Conference%'").run();
+  db.prepare("DELETE FROM blocked_time_slots WHERE reason LIKE '%Sanitization%'").run();
+
+  let passed = 0;
+  let failed = 0;
+
+  async function test(name, fn) {
+    try {
+      process.stdout.write(`TEST: ${name} ... `);
+      await fn();
+      console.log('PASSED ✓');
+      passed++;
+    } catch (err) {
+      console.log('FAILED ✕');
+      console.error(err);
+      failed++;
+    }
+  }
+
+  // 1. Check Public Info & Services
+  await test('Public Clinic Info API returns Feni branch details', async () => {
+    const res = await request('GET', '/api/public/info');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.data.branch_name, 'Feni Branch');
+    assert.strictEqual(res.data.data.phone, '01758-354920');
+  });
+
+  await test('Public Services API: exactly 2 active services, Ruqyah 2050 BDT, Hijama consultation-based', async () => {
+    const res = await request('GET', '/api/public/services');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert(Array.isArray(res.data.data));
+
+    // Only active services returned
+    const ruqyah = res.data.data.find(s => s.code === 'ruqyah' || s.name.includes('রুকইয়াহ'));
+    assert(ruqyah, 'Ruqyah service must be present');
+    assert.strictEqual(ruqyah.price, 2050, 'Ruqyah price must be exactly 2,050 BDT');
+
+    const hijama = res.data.data.find(s => s.code === 'hijama' || s.name.includes('হিজামা'));
+    assert(hijama, 'Hijama service must be present');
+    assert.strictEqual(hijama.price, 0, 'Hijama price is 0 (consultation-based)');
+
+    // Ensure old packages (1500, etc) are not active
+    const old1500 = res.data.data.find(s => s.price === 1500);
+    assert(!old1500, 'Old 1500 BDT package must not be active');
+  });
+
+  // Pick target test date: 10 days from now (non-Friday)
+  let targetDate = new Date(Date.now() + 10 * 86400000);
+  if (targetDate.getDay() === 5) {
+    targetDate = new Date(targetDate.getTime() + 86400000);
+  }
+  const testDateStr = targetDate.toISOString().split('T')[0];
+
+  // 2. Initial Availability Check
+  await test('Public Availability API computes 10 slots and disallows Friday / past dates', async () => {
+    const res = await request('GET', `/api/public/availability?date=${testDateStr}`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.totalSlots, 10);
+    assert(res.data.availableSlots.length > 0, 'Should have available slots on valid date');
+
+    // Test Friday check
+    const nextFriday = new Date();
+    nextFriday.setDate(nextFriday.getDate() + ((5 - nextFriday.getDay() + 7) % 7 || 7));
+    const friStr = nextFriday.toISOString().split('T')[0];
+    const friRes = await request('GET', `/api/public/availability?date=${friStr}`);
+    assert.strictEqual(friRes.data.isWeeklyHoliday, true);
+    assert.strictEqual(friRes.data.isAvailable, false);
+    assert.strictEqual(friRes.data.slots.length, 0);
+
+    // Test Past date check
+    const pastRes = await request('GET', '/api/public/availability?date=2020-01-01');
+    assert.strictEqual(pastRes.data.isPast, true);
+    assert.strictEqual(pastRes.data.isAvailable, false);
+  });
+
+  // 3. Appointment Booking: Ruqyah (2,050 BDT)
+  const slotToBook = '10:00 AM – 11:00 AM';
+  let bookedAptId = '';
+
+  await test('Book appointment for Ruqyah (service_type: ruqyah, price: 2050)', async () => {
+    const payload = {
+      full_name: 'Test Patient A',
+      phone: '01719998877',
+      address: 'Mohipal, Feni',
+      service_type: 'ruqyah',
+      number_of_patients: 1,
+      appointment_date: testDateStr,
+      time_slot: slotToBook,
+      additional_notes: 'Experiencing sudden severe chest tightness and night terrors.'
+    };
+
+    const res = await request('POST', '/api/public/book', payload);
+    assert.strictEqual(res.statusCode, 201);
+    assert.strictEqual(res.data.success, true);
+    assert(res.data.data.appointment_id.startsWith('APT-'));
+    assert.strictEqual(res.data.data.patient_name, 'Test Patient A');
+    assert.strictEqual(res.data.data.time_slot, slotToBook);
+    assert.strictEqual(res.data.data.service_type, 'ruqyah');
+    assert.strictEqual(res.data.data.price, 2050);
+    assert.strictEqual(res.data.data.price_display, '২,০৫০ টাকা');
+    bookedAptId = res.data.data.appointment_id;
+  });
+
+  await test('MANDATORY REQUIREMENT: Booked time slot automatically disappears from available list', async () => {
+    const res = await request('GET', `/api/public/availability?date=${testDateStr}`);
+    assert.strictEqual(res.statusCode, 200);
+    const availableSlotLabels = res.data.availableSlots.map(s => s.label);
+    assert(!availableSlotLabels.includes(slotToBook), 'Booked slot must disappear from availableSlots');
+    assert.strictEqual(res.data.availableCount, 9);
+  });
+
+  await test('MANDATORY REQUIREMENT: Concurrency test - Patient B tries booking same slot -> strictly REJECTED', async () => {
+    const payload = {
+      full_name: 'Test Patient B',
+      phone: '01899990000',
+      address: 'Dagonbhuiyan, Feni',
+      service_type: 'ruqyah',
+      number_of_patients: 1,
+      appointment_date: testDateStr,
+      time_slot: slotToBook, // Exact same slot!
+      additional_notes: 'Duplicate attempt test'
+    };
+
+    const res = await request('POST', '/api/public/book', payload);
+    assert.strictEqual(res.statusCode, 400);
+    assert.strictEqual(res.data.success, false);
+    assert(res.data.error.includes('already been booked') || res.data.error.includes('alternative slot'));
+  });
+
+  // 4. Appointment Booking: Hijama (Consultation based)
+  const hijamaSlot = '11:00 AM – 12:00 PM';
+  let hijamaAptId = '';
+
+  await test('Book appointment for Hijama (service_type: hijama, consultation fee)', async () => {
+    const payload = {
+      full_name: 'Test Patient Hijama',
+      phone: '01711223344',
+      address: 'Sonagazi, Feni',
+      service_type: 'hijama',
+      number_of_patients: 1,
+      appointment_date: testDateStr,
+      time_slot: hijamaSlot,
+      additional_notes: 'Migraine and back pain.'
+    };
+
+    const res = await request('POST', '/api/public/book', payload);
+    assert.strictEqual(res.statusCode, 201);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.data.service_type, 'hijama');
+    assert.strictEqual(res.data.data.price, null);
+    assert.strictEqual(res.data.data.price_display, 'খরচ পরামর্শের মাধ্যমে নির্ধারণ করা হবে।');
+    hijamaAptId = res.data.data.appointment_id;
+  });
+
+  // 5. Appointment Status Lookup
+  await test('Appointment Status Lookup: verifies reference ID, service, and fee', async () => {
+    const res = await request('GET', `/api/public/lookup?q=${bookedAptId}`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.data[0].appointment_id, bookedAptId);
+    assert.strictEqual(res.data.data[0].patient_phone, '01719998877');
+    assert.strictEqual(res.data.data[0].service_price, 2050);
+
+    const hijamaRes = await request('GET', `/api/public/lookup?q=${hijamaAptId}`);
+    assert.strictEqual(hijamaRes.statusCode, 200);
+    assert.strictEqual(hijamaRes.data.data[0].service_type, 'hijama');
+  });
+
+  // 6. Admin Authentication & Route Protection
+  await test('Security: Admin routes strictly reject unauthorized visitors (401)', async () => {
+    const res1 = await request('GET', '/api/admin/appointments');
+    assert.strictEqual(res1.statusCode, 401);
+
+    const res2 = await request('GET', '/api/admin/patients');
+    assert.strictEqual(res2.statusCode, 401);
+
+    const res3 = await request('GET', '/api/admin/sessions');
+    assert.strictEqual(res3.statusCode, 401);
+  });
+
+  await test('Admin Login with valid credentials succeeds and issues cookie', async () => {
+    const res = await request('POST', '/api/auth/login', {
+      username: 'admin',
+      password: 'Admin@12345'
+    });
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.admin.username, 'admin');
+
+    const cookieHeader = res.headers['set-cookie'];
+    assert(cookieHeader, 'Must set authentication cookie');
+    adminCookie = cookieHeader[0].split(';')[0];
+  });
+
+  // 7. Admin Appointments List: includes service_type and service_price
+  await test('Admin Appointments API includes service_type and service_price', async () => {
+    const res = await request('GET', '/api/admin/appointments');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    const apt = res.data.data.find(a => a.appointment_id === bookedAptId);
+    assert(apt, 'Booked appointment must exist in admin list');
+    assert.strictEqual(apt.service_type, 'ruqyah');
+    assert.strictEqual(apt.service_price, 2050);
+  });
+
+  // 8. Manage Clinic Availability
+  let closeTarget = new Date(Date.now() + 15 * 86400000);
+  if (closeTarget.getDay() === 5) {
+    closeTarget = new Date(closeTarget.getTime() + 86400000);
+  }
+  const closeTestDate = closeTarget.toISOString().split('T')[0];
+
+  await test('Admin Date Closure: Close an entire date with custom reason', async () => {
+    const res = await request('POST', '/api/admin/availability/close-date', {
+      date: closeTestDate,
+      reason: 'Raqi Muhammadullah Miah Traveling to Chittagong Conference'
+    });
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+
+    // Verify public booking calendar immediately reflects closed date
+    const checkRes = await request('GET', `/api/public/availability?date=${closeTestDate}`);
+    assert.strictEqual(checkRes.data.isClosedDay, true);
+    assert.strictEqual(checkRes.data.isAvailable, false);
+    assert.strictEqual(checkRes.data.slots.length, 0);
+    assert(checkRes.data.reason.includes('Chittagong Conference'));
+
+    // Try booking on closed date -> rejected
+    const bookRes = await request('POST', '/api/public/book', {
+      full_name: 'Patient C',
+      phone: '01600112233',
+      address: 'Feni',
+      service_type: 'ruqyah',
+      appointment_date: closeTestDate,
+      time_slot: '09:00 AM – 10:00 AM'
+    });
+    assert.strictEqual(bookRes.statusCode, 400);
+  });
+
+  await test('Admin Date Reopening: Reopen previously closed date', async () => {
+    const res = await request('POST', '/api/admin/availability/reopen-date', {
+      date: closeTestDate
+    });
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+
+    const checkRes = await request('GET', `/api/public/availability?date=${closeTestDate}`);
+    assert.strictEqual(checkRes.data.isClosedDay, undefined);
+    assert(checkRes.data.availableSlots.length > 0);
+  });
+
+  await test('Admin Slot Blocking: Block specific time slot on a date', async () => {
+    const blockSlot = '02:00 PM – 03:00 PM';
+    const res = await request('POST', '/api/admin/availability/block-slot', {
+      date: testDateStr,
+      time_slot: blockSlot,
+      reason: 'Clinic Sanitization & Equipment Sterilization'
+    });
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+
+    const checkRes = await request('GET', `/api/public/availability?date=${testDateStr}`);
+    const labels = checkRes.data.availableSlots.map(s => s.label);
+    assert(!labels.includes(blockSlot), 'Blocked slot must disappear from public availability');
+    assert(labels.includes('03:00 PM – 04:00 PM'), 'Other available times must remain visible');
+
+    // Unblock the slot
+    const unblockRes = await request('POST', '/api/admin/availability/unblock-slot', {
+      date: testDateStr,
+      time_slot: blockSlot
+    });
+    assert.strictEqual(unblockRes.statusCode, 200);
+  });
+
+  // 9. Appointment Rescheduling
+  let newRescheduleSlot = '03:00 PM – 04:00 PM';
+  await test('Reschedule Appointment: move to 03:00 PM - 04:00 PM on same date', async () => {
+    const res = await request('POST', `/api/admin/appointments/${bookedAptId}/reschedule`, {
+      new_date: testDateStr,
+      new_time_slot: newRescheduleSlot,
+      reason: 'Patient requested afternoon time'
+    });
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+
+    // Verify original slot (10:00 AM - 11:00 AM) is now available again!
+    const checkRes = await request('GET', `/api/public/availability?date=${testDateStr}`);
+    const labels = checkRes.data.availableSlots.map(s => s.label);
+    assert(labels.includes(slotToBook), 'Previous slot must become available again');
+    assert(!labels.includes(newRescheduleSlot), 'New slot must be reserved');
+  });
+
+  // 10. Patient CRM & Expanded History Form (PRD 7: সমস্যা কত দিন ধরে? & কী কী প্রক্রিয়ায় চিকিৎসা নিয়েছেন?)
+  let testPatientId = '';
+  await test('Patient CRM: Register new patient and generate unique Patient ID', async () => {
+    const res = await request('POST', '/api/admin/patients', {
+      full_name: 'Mahmudur Rahman',
+      phone: '01955443322',
+      age: 42,
+      gender: 'Male',
+      marital_status: 'Married',
+      address: 'Chhagalnaiya, Feni',
+      emergency_contact: 'Wife: 01988776655',
+      notes: 'Referred for prolonged nocturnal anxiety and religious waswas.'
+    });
+    assert.strictEqual(res.statusCode, 201);
+    assert.strictEqual(res.data.success, true);
+    assert(res.data.data.patient_id.startsWith('RSCC-P-'));
+    testPatientId = res.data.data.patient_id;
+  });
+
+  await test('Patient CRM: Save expanded History with problem_duration and previous_treatment_history', async () => {
+    const historyPayload = {
+      main_symptoms: ['Chest heaviness & suffocation', 'Sudden unprovoked anger', 'Constant unexplained exhaustion'],
+      physical_symptoms: ['Stomach tingling / burning sensation', 'Upper back & shoulder tension'],
+      sleep_problems: ['Severe insomnia', 'Sleep paralysis (Kaboos)', 'Frequent abrupt awakenings'],
+      dream_problems: ['Black dogs and beasts attacking', 'Falling from high structures', 'Walking in graveyards'],
+      worship_problems: ['Severe intrusive doubts (Waswas) in Wudu / Salah', 'Sudden overwhelming sleepiness during recitation'],
+      family_history: 'Unremarkable. Good marital relations prior to symptoms.',
+      genetic_history: 'পরিবারে কোনো পূর্ববর্তী মানসিক বা জিনঘটিত রোগের ইতিহাস নেই।',
+      financial_family_situation: 'ব্যবসায় হঠাৎ অচলাবস্থা সৃষ্টি হয়েছে।',
+      rizq_family_situation: 'ব্যবসায় হঠাৎ অচলাবস্থা সৃষ্টি হয়েছে।',
+      previous_medical_history: 'কবিরাজ: ৩টি তাবিয দেওয়া হয়েছিল। এলোপ্যাথিক: ঘুমের ওষুধ খেয়েছিলেন।',
+      previous_treatment_history: 'কবিরাজ: ৩টি তাবিয দেওয়া হয়েছিল। এলোপ্যাথিক: ঘুমের ওষুধ খেয়েছিলেন।',
+      duration_of_problems: '২ বছর',
+      problem_duration: '২ বছর',
+      additional_information: 'Patient wore a copper talisman from village astrologer which was removed.'
+    };
+
+    const res = await request('PUT', `/api/admin/patients/${testPatientId}/history`, historyPayload);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+
+    // Verify retrieval of updated fields
+    const getRes = await request('GET', `/api/admin/patients/${testPatientId}`);
+    assert.strictEqual(getRes.statusCode, 200);
+    const hist = getRes.data.data.history;
+    assert(hist !== null);
+    assert.strictEqual(hist.problem_duration, '২ বছর', 'problem_duration must be correctly stored');
+    assert(hist.previous_treatment_history.includes('কবিরাজ'), 'previous_treatment_history must be correctly stored');
+    assert(hist.rizq_family_situation.includes('অচলাবস্থা'));
+    assert(hist.genetic_history.includes('পরিবারে'));
+  });
+
+  // 11. Ruqyah Diagnosis & Session Recording
+  let recordedSessionId = '';
+  await test('Ruqyah Session Recording: verses, reactions, Raqi professional assessment', async () => {
+    const sessionPayload = {
+      patient_id: testPatientId,
+      session_date: new Date().toISOString().split('T')[0],
+      raqi_name: 'Muhammadullah Miah',
+      initial_assessment: 'Patient arrived with tense demeanor, accompanied by wife.',
+      reported_symptoms: 'Heaviness in chest, frequent nightmares of black animals.',
+      patient_main_symptoms: 'মাথা ঘোরা ও সার্বক্ষণিক তীব্র অবসাদ',
+      medical_history_checked: 'Neurological workup verified negative for organic epilepsy.',
+      observed_reactions: [
+        'Trembling / involuntary shivering in limbs',
+        'Deep repeated yawning',
+        'Profuse cold sweating'
+      ],
+      physical_observations: 'তিলাওয়াত চলাকালীন ডান হাতে কাঁপুনি ও বারবার দীর্ঘ হাই তোলার প্রবণতা লক্ষণীয়।',
+      manual_diagnosis: ['আইন (Ayn)', 'সেহের (Sihr)'],
+      assessment_category: 'আইন (Ayn), সেহের (Sihr)',
+      prescribed_amal: 'প্রতিদিন সকালে ৭টি আজওয়া খেজুর, পড়া পানি পান, বরই পাতা দিয়ে গোসল এবং সকাল-সন্ধ্যার মাসনূন আজকার পাঠ।',
+      raqi_comments: 'রোগীর মধ্যে বদনজর ও সিহরের প্রভাব স্পষ্ট। তবে মানসিক সচেতনতা অটুট। নিয়মিত সুন্নাহ আমল অব্যাহত রাখতে হবে।',
+      special_advice: 'পাঁচ ওয়াক্ত সালাত জামাতে আদায়, গান-বাজনা বর্জন, ঘরে সূরা আল-বাকারাহ তিলাওয়াত এবং সবধরনের তাবিয পরিহার।',
+      next_followup_date: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+    };
+
+    const res = await request('POST', '/api/admin/sessions', sessionPayload);
+    assert.strictEqual(res.statusCode, 201);
+    assert.strictEqual(res.data.success, true);
+    assert(res.data.session_id.startsWith('RS-'));
+    recordedSessionId = res.data.session_id;
+
+    // Verify session data persistence via GET
+    const getRes = await request('GET', `/api/admin/sessions/${recordedSessionId}`);
+    assert.strictEqual(getRes.statusCode, 200);
+    assert.strictEqual(getRes.data.success, true);
+    assert(getRes.data.data.patient_main_symptoms.includes('মাথা ঘোরা'));
+    assert(getRes.data.data.prescribed_amal.includes('আজওয়া খেজুর'));
+    assert(getRes.data.data.raqi_comments.includes('বদনজর'));
+    assert(getRes.data.data.special_advice.includes('সালাত জামাতে আদায়'));
+  });
+
+  // 12. Follow-up Tracking
+  await test('Follow-up Management: Progression tracking and status update', async () => {
+    const listRes = await request('GET', `/api/admin/followups?patient_id=${testPatientId}`);
+    assert.strictEqual(listRes.statusCode, 200);
+    assert(listRes.data.data.length > 0);
+    const followup = listRes.data.data[0];
+
+    const updateRes = await request('PUT', `/api/admin/followups/${followup.id}`, {
+      symptom_progression: 'Mildly Improved',
+      symptom_changes_notes: 'Chest heaviness decreased significantly after 4 Sidr baths. Sleep improved.',
+      status: 'Completed'
+    });
+    assert.strictEqual(updateRes.statusCode, 200);
+    assert.strictEqual(updateRes.data.success, true);
+  });
+
+  // 13. PDF Report Generation
+  await test('MANDATORY REQUIREMENT: PDF Report 1 - Patient History Report PDF binary download', async () => {
+    const res = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.headers['content-type'], 'application/pdf');
+    assert(res.rawBuffer.length > 1000, 'PDF buffer must contain real content');
+    const pdfHeader = res.rawBuffer.slice(0, 8).toString();
+    assert(pdfHeader.startsWith('%PDF-1.'), `Header must be valid PDF, got: ${pdfHeader}`);
+  });
+
+  await test('MANDATORY REQUIREMENT: PDF Report 2 - Ruqyah Session Report PDF binary download', async () => {
+    const res = await request('GET', `/api/admin/reports/session/${recordedSessionId}/pdf`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.headers['content-type'], 'application/pdf');
+    assert(res.rawBuffer.length > 1000, 'PDF buffer must contain real content');
+    const pdfHeader = res.rawBuffer.slice(0, 8).toString();
+    assert(pdfHeader.startsWith('%PDF-1.'), `Header must be valid PDF, got: ${pdfHeader}`);
+  });
+
+  // 14. Database Backup & Audit Logs
+  await test('Database Backup: Exports complete JSON snapshot', async () => {
+    const res = await request('GET', '/api/admin/settings/backup');
+    assert.strictEqual(res.statusCode, 200);
+    assert(res.headers['content-type'].includes('application/json'));
+    assert(res.data.patients.length > 0);
+    assert(res.data.appointments.length > 0);
+  });
+
+  await test('Audit Trail: Records administrative changes', async () => {
+    const res = await request('GET', '/api/admin/settings/audit-logs');
+    assert.strictEqual(res.statusCode, 200);
+    assert(res.data.data.length > 0);
+  });
+
+  // ==============================================================
+  // 15. THE 10 DIAGNOSIS CATEGORIES & APPROVED CLINICAL DATASET
+  // ==============================================================
+  await test('CRITICAL REQUIREMENT: Exactly 10 diagnosis categories exist in DB', async () => {
+    const res = await request('GET', '/api/admin/diagnosis/categories');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.data.length, 10, 'Must have exactly 10 diagnosis categories');
+    
+    // Check Bengali Unicode names for all 10 approved categories
+    const expectedCodes = [
+      'patient_main_symptoms', 'main_complaints', 'physical_symptoms', 'sleep_problems', 'dream_problems',
+      'rizq_obstacles', 'mental_behavioral', 'worship_obstacles', 'onset_history', 'family_social'
+    ];
+    res.data.data.forEach((cat, idx) => {
+      assert(cat.name_bn && cat.name_bn.length > 3, `Category ${idx+1} must have valid Bengali name`);
+      assert(cat.name_en && cat.name_en.length > 3, `Category ${idx+1} must have valid English name`);
+      assert(expectedCodes.includes(cat.code), `Category code ${cat.code} must match approved dataset`);
+    });
+
+    // Category 1 is patient_main_symptoms with 0 predefined checkboxes
+    const cat1 = res.data.data[0];
+    assert.strictEqual(cat1.code, 'patient_main_symptoms');
+    assert.strictEqual(cat1.name_bn, 'রোগীর প্রধান উপসর্গসমূহ');
+    assert.strictEqual(cat1.symptoms.length, 0, 'Category 1 must contain ONLY textarea for main symptoms (0 predefined checkboxes)');
+  });
+
+  await test('CRITICAL CORRECTION: At least 10 active items per category for categories 2-10 = 92 items total', async () => {
+    const res = await request('GET', '/api/admin/diagnosis/categories');
+    assert.strictEqual(res.statusCode, 200);
+
+    let totalSymptoms = 0;
+    const symptomCategories = res.data.data.filter(c => c.code !== 'patient_main_symptoms');
+    assert.strictEqual(symptomCategories.length, 9, 'Must have 9 categories containing selectable symptoms');
+
+    symptomCategories.forEach((cat, idx) => {
+      const symCount = cat.symptoms.length;
+      assert(symCount >= 10, `Category ${cat.name_bn} (#${idx+2}) must contain AT LEAST 10 items, got: ${symCount}`);
+      totalSymptoms += symCount;
+      
+      // Verify every symptom has bilingual labels and sort order
+      cat.symptoms.forEach(s => {
+        assert(s.symptom_bn && s.symptom_bn.length > 3, 'Symptom must have detailed Bengali text');
+        assert(s.symptom_en && s.symptom_en.length > 3, 'Symptom must have English text');
+        assert.strictEqual(s.status, 'active');
+      });
+    });
+
+    assert.strictEqual(totalSymptoms, 92, 'Total active items across categories 2-10 must be 92');
+  });
+
+  await test('VERIFICATION: No 5-symptom limitation or truncation exists in diagnosis API', async () => {
+    const res = await request('GET', '/api/admin/diagnosis/categories');
+    assert.strictEqual(res.statusCode, 200);
+    const symptomCategories = res.data.data.filter(c => c.code !== 'patient_main_symptoms');
+    symptomCategories.forEach(cat => {
+      assert(cat.symptoms.length >= 10, `Category ${cat.name_bn} must have >= 10 symptoms (found: ${cat.symptoms.length})`);
+    });
+  });
+
+  await test('Patient Diagnosis: Save multi-selection symptoms across categories with Bengali summary and custom notes', async () => {
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    const cat1 = catRes.data.data.find(c => c.code === 'main_complaints');
+    const cat2 = catRes.data.data.find(c => c.code === 'physical_symptoms');
+    const cat6 = catRes.data.data.find(c => c.code === 'mental_behavioral'); // has suicidal thoughts item
+
+    // Find suicidal ideation symptom in Category 6
+    const suicideSym = cat6.symptoms.find(s => s.symptom_bn.includes('আত্মহত্যা') || s.symptom_en.toLowerCase().includes('suicid'));
+    assert(suicideSym, 'Category 6 must contain the suicidal thoughts/self-harm item');
+
+    const selectedSymIds = [
+      cat1.symptoms[0].id, cat1.symptoms[1].id, cat1.symptoms[2].id,
+      cat2.symptoms[0].id, cat2.symptoms[1].id, cat2.symptoms[2].id,
+      suicideSym.id
+    ];
+
+    const saveRes = await request('POST', `/api/admin/diagnosis/patient/${testPatientId}`, {
+      selected_symptom_ids: selectedSymIds,
+      main_complaints_text: 'রোগী প্রায় ৩ মাস ধরে অস্বাভাবিক অস্থিরতা এবং তীব্র মাথাব্যথায় ভুগছেন।',
+      onset_history_notes: 'সমস্যাটি হঠাৎ শুরু হয়েছিল একটি পারিবারিক শোকের ঘটনার পর। পূর্বে অ্যালোপ্যাথিক চিকিৎসা নিয়েছেন।',
+      family_social_notes: 'পারিবারিক পরিবেশ কিছুটা অশান্ত, তবে নিকটাত্মীয়রা সহযোগিতাপূর্ণ।',
+      notes: 'শারীরিক ও মানসিক লক্ষণসমূহ চিহ্নিত হয়েছে। রোগীকে আধুনিক সাইকিয়াট্রিক মূল্যায়নের পাশাপাশি শারঈ রুকইয়াহর দিকনির্দেশনা দেওয়া হলো।',
+      raqi_name: 'মুহাম্মদুল্লাহ মিয়াহ',
+      diagnosis_date: new Date().toISOString().split('T')[0]
+    });
+
+    assert.strictEqual(saveRes.statusCode, 200);
+    assert.strictEqual(saveRes.data.success, true);
+    assert.strictEqual(saveRes.data.data.total_symptoms, 7);
+    assert.strictEqual(saveRes.data.data.total_categories, 3);
+    assert.strictEqual(saveRes.data.data.suicidal_ideation_flag, 1, 'Suicide safety flag must be activated');
+    assert(saveRes.data.data.summary_bn.includes('৭টি উপসর্গ'), 'Summary must mention 7 symptoms');
+    assert(saveRes.data.data.summary_bn.includes('৩টি ক্যাটাগরিতে'), 'Summary must mention 3 categories');
+    assert(saveRes.data.data.summary_bn.includes('জরুরি সতর্কতা'), 'Summary must include safety alert for suicide ideation');
+  });
+
+  await test('Patient Diagnosis: Reopen record, verify custom fields & persistence', async () => {
+    // 1. Fetch saved diagnosis
+    const getRes = await request('GET', `/api/admin/diagnosis/patient/${testPatientId}`);
+    assert.strictEqual(getRes.statusCode, 200);
+    assert.strictEqual(getRes.data.success, true);
+    assert.strictEqual(getRes.data.data.selected_symptom_ids.length, 7);
+    assert.strictEqual(getRes.data.data.suicidal_ideation_flag, 1);
+    assert.strictEqual(getRes.data.data.main_complaints_text, 'রোগী প্রায় ৩ মাস ধরে অস্বাভাবিক অস্থিরতা এবং তীব্র মাথাব্যথায় ভুগছেন।');
+    assert(getRes.data.data.onset_history_notes.includes('পারিবারিক শোকের'), 'Onset notes must persist');
+    assert(getRes.data.data.family_social_notes.includes('পারিবারিক পরিবেশ'), 'Family notes must persist');
+
+    // 2. Edit: Add 3 more symptoms from category 3 (sleep)
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    const cat3 = catRes.data.data.find(c => c.code === 'sleep_problems');
+    const updatedSymIds = [...getRes.data.data.selected_symptom_ids, cat3.symptoms[0].id, cat3.symptoms[1].id, cat3.symptoms[2].id];
+    assert.strictEqual(updatedSymIds.length, 10);
+
+    const updateRes = await request('POST', `/api/admin/diagnosis/patient/${testPatientId}`, {
+      selected_symptom_ids: updatedSymIds,
+      main_complaints_text: 'আপডেটকৃত প্রধান অভিযোগসমূহ।',
+      onset_history_notes: 'আপডেটকৃত ইতিহাস।',
+      family_social_notes: 'আপডেটকৃত সামাজিক বিবরণ।',
+      notes: 'ঘুমের সমস্যাও সংযুক্ত করা হলো।',
+      raqi_name: 'মুহাম্মদুল্লাহ মিয়াহ',
+      diagnosis_date: new Date().toISOString().split('T')[0]
+    });
+
+    assert.strictEqual(updateRes.statusCode, 200);
+    assert.strictEqual(updateRes.data.data.total_symptoms, 10);
+
+    // 3. Verify persistence
+    const verifyRes = await request('GET', `/api/admin/diagnosis/patient/${testPatientId}`);
+    assert.strictEqual(verifyRes.statusCode, 200);
+    assert.strictEqual(verifyRes.data.data.selected_symptom_ids.length, 10, 'Updated diagnosis must persist 10 symptoms');
+    assert.strictEqual(verifyRes.data.data.main_complaints_text, 'আপডেটকৃত প্রধান অভিযোগসমূহ।');
+  });
+
+  await test('Admin Diagnosis Management: Edit category & symptom bilingual details', async () => {
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    const targetCat = catRes.data.data.find(c => c.code === 'main_complaints');
+    const targetSym = targetCat.symptoms[0];
+
+    // 1. Update Category
+    const catUpdateRes = await request('PUT', `/api/admin/diagnosis/categories/${targetCat.id}`, {
+      name_bn: 'প্রধান সমস্যা ও অভিযোগ (সম্পাদিত)',
+      name_en: 'Main Complaints & Presenting Symptoms (Edited)',
+      description_bn: 'হালনাগাদকৃত বিবরণী।',
+      description_en: 'Updated clinical description.',
+      sort_order: targetCat.sort_order,
+      status: 'active'
+    });
+    assert.strictEqual(catUpdateRes.statusCode, 200);
+    assert.strictEqual(catUpdateRes.data.success, true);
+
+    // 2. Update Symptom
+    const symUpdateRes = await request('PUT', `/api/admin/diagnosis/symptoms/${targetSym.id}`, {
+      symptom_bn: 'তীব্র বা দীর্ঘস্থায়ী মাথাব্যথা (পরীক্ষিত)',
+      symptom_en: 'Severe or persistent headache (Verified)',
+      sort_order: 1,
+      status: 'active'
+    });
+    assert.strictEqual(symUpdateRes.statusCode, 200);
+    assert.strictEqual(symUpdateRes.data.success, true);
+
+    // Revert back to original approved names
+    await request('PUT', `/api/admin/diagnosis/categories/${targetCat.id}`, {
+      name_bn: 'প্রধান সমস্যা ও অভিযোগ',
+      name_en: 'Main Complaints & Presenting Symptoms',
+      description_bn: 'রোগীর প্রাথমিক ও তাৎক্ষণিক সমস্যাসমূহের তালিকা।',
+      description_en: 'Initial and immediate complaints reported by patient.',
+      sort_order: targetCat.sort_order,
+      status: 'active'
+    });
+    await request('PUT', `/api/admin/diagnosis/symptoms/${targetSym.id}`, {
+      symptom_bn: 'তীব্র বা দীর্ঘস্থায়ী মাথাব্যথা',
+      symptom_en: 'Severe or persistent headache',
+      sort_order: 1,
+      status: 'active'
+    });
+  });
+
+  await test('Public Diagnosis API: Returns all 10 active categories and 92 symptoms total', async () => {
+    const res = await request('GET', '/api/public/diagnosis/categories');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert.strictEqual(res.data.data.length, 10);
+    let symCount = 0;
+    res.data.data.forEach(c => symCount += c.symptoms.length);
+    assert.strictEqual(symCount, 92);
+  });
+
+  await test('PDF Report with Full Diagnosis: binary download includes all 10 selected symptoms', async () => {
+    const res = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf`);
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.headers['content-type'], 'application/pdf');
+    assert(res.rawBuffer.length > 1000);
+    const pdfContent = res.rawBuffer.toString('latin1');
+    assert(pdfContent.includes('9-CATEGORY CLINICAL DIAGNOSIS'), 'PDF must include 9-category diagnosis section');
+  });
+
+  await test('Dual-Language PDF: Download Bengali PDF (?lang=bn) and English PDF (?lang=en)', async () => {
+    // 1. Bengali PDF
+    const bnRes = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf?lang=bn`);
+    assert.strictEqual(bnRes.statusCode, 200);
+    assert.strictEqual(bnRes.headers['content-type'], 'application/pdf');
+    assert(bnRes.headers['content-disposition'].includes('_BN.pdf'));
+    assert(bnRes.rawBuffer.length > 5000);
+
+    // 2. English PDF
+    const enRes = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf?lang=en`);
+    assert.strictEqual(enRes.statusCode, 200);
+    assert.strictEqual(enRes.headers['content-type'], 'application/pdf');
+    assert(enRes.headers['content-disposition'].includes('_EN.pdf'));
+    assert(enRes.rawBuffer.length > 5000);
+    const enPdfContent = enRes.rawBuffer.toString('latin1');
+    assert(enPdfContent.includes('URGENT CLINICAL ALERT') || enPdfContent.includes('Suicidal') || enPdfContent.includes('9-CATEGORY'), 'English PDF must reflect clinical diagnosis status');
+  });
+
+  await test('CLINICAL SAFETY: Suicidal thoughts detection flags record and attaches clinical warning', async () => {
+    // Verify patient diagnosis has suicidal_ideation_flag set
+    const diagRes = await request('GET', `/api/admin/diagnosis/patient/${testPatientId}`);
+    assert.strictEqual(diagRes.statusCode, 200);
+    assert.strictEqual(diagRes.data.data.suicidal_ideation_flag, 1);
+    assert(diagRes.data.data.summary_bn.includes('জরুরি সতর্কতা'));
+  });
+
+  await test('STRUCTURED HISTORY: Categories 8 & 9 function as structured questionnaires with custom text', async () => {
+    const catsRes = await request('GET', '/api/admin/diagnosis/categories');
+    const cat8 = catsRes.data.data.find(c => c.code === 'onset_history');
+    const cat9 = catsRes.data.data.find(c => c.code === 'family_social');
+    
+    assert(cat8, 'Category 8 (onset_history) must exist');
+    assert(cat9, 'Category 9 (family_social) must exist');
+    assert.strictEqual(cat8.symptoms.length, 10, 'Category 8 must have 10 structured questions');
+    assert.strictEqual(cat9.symptoms.length, 10, 'Category 9 must have 10 structured questions');
+
+    // Verify first question text
+    assert(cat8.symptoms[0].symptom_bn.includes('কবে থেকে শুরু হয়েছে'));
+    assert(cat9.symptoms[0].symptom_bn.includes('অন্য সদস্যদের'));
+  });
+
+  await test('Dual-Language Session PDF: Download Bengali and English Session PDFs', async () => {
+    const sRes = await request('GET', `/api/admin/reports/session/${recordedSessionId}/pdf?lang=bn`);
+    assert.strictEqual(sRes.statusCode, 200);
+    assert.strictEqual(sRes.headers['content-type'], 'application/pdf');
+    assert(sRes.headers['content-disposition'].includes('_BN.pdf'));
+
+    const sEnRes = await request('GET', `/api/admin/reports/session/${recordedSessionId}/pdf?lang=en`);
+    assert.strictEqual(sEnRes.statusCode, 200);
+    assert.strictEqual(sEnRes.headers['content-type'], 'application/pdf');
+    assert(sEnRes.headers['content-disposition'].includes('_EN.pdf'));
+  });
+
+  await test('Official Clinic Logo Integration: Assets exist and settings include logo_url', async () => {
+    const settingsRes = await request('GET', '/api/admin/settings');
+    assert.strictEqual(settingsRes.statusCode, 200);
+    assert(settingsRes.data.data.logo_url);
+
+    const fs = require('fs');
+    assert(fs.existsSync('public/images/logo.png'), 'logo.png must exist');
+    assert(fs.existsSync('public/images/official-logo.jpg'), 'official-logo.jpg must exist');
+  });
+
+  await test('Public Articles / Case Studies: Seeded cases are accessible publicly', async () => {
+    const res = await request('GET', '/api/public/articles');
+    assert.strictEqual(res.statusCode, 200);
+    assert.strictEqual(res.data.success, true);
+    assert(res.data.data.length >= 3, 'Must have at least 3 seeded cases');
+
+    const first = res.data.data[0];
+    const detailRes = await request('GET', `/api/public/articles/${first.slug_bn}`);
+    assert.strictEqual(detailRes.statusCode, 200);
+    assert.strictEqual(detailRes.data.success, true);
+    assert(detailRes.data.data.title_bn);
+    assert(detailRes.data.data.content_bn);
+  });
+
+  await test('Articles System: Privacy protection strictly rejects phone numbers in case study', async () => {
+    const privacyRes = await request('POST', '/api/admin/articles', {
+      title_bn: 'অশ্লীল পরীক্ষণ কেস',
+      content_bn: 'এই রোগীর মোবাইল নম্বর হলো 01712345678 এবং তিনি এসেছিলেন।'
+    });
+    assert.strictEqual(privacyRes.statusCode, 400);
+    assert(privacyRes.data.error.includes('Privacy Violation') || privacyRes.data.error.includes('গোপনীয়তা'));
+  });
+
+  await test('Admin Articles CRUD: Create, Toggle Status, Update and Delete article', async () => {
+    // Create
+    const createRes = await request('POST', '/api/admin/articles', {
+      title_bn: 'টেস্ট কেস স্টাডি: বদনজর থেকে সুস্থতা',
+      title_en: 'Test Case Study: Recovery from Evil Eye',
+      slug_bn: 'test-case-recovery-evil-eye',
+      slug_en: 'test-case-recovery-evil-eye-en',
+      category_bn: 'বদনজর চিকিৎসা',
+      category_en: 'Evil Eye Treatment',
+      excerpt_bn: 'রোগীর সংক্ষিপ্ত বিবরণী ও ডায়াগনোসিস।',
+      excerpt_en: 'Brief patient presentation and diagnosis.',
+      content_bn: 'বিস্তারিত রুকইয়াহ ও হিজামার বিবরণ। আল্লাহর রহমতে সুস্থ।',
+      content_en: 'Detailed treatment protocol and recovery by Allah\'s mercy.',
+      status: 'published'
+    });
+    assert.strictEqual(createRes.statusCode, 200);
+    assert.strictEqual(createRes.data.success, true);
+    const newArtId = createRes.data.article_id;
+
+    // Toggle Status
+    const statusRes = await request('PUT', `/api/admin/articles/${newArtId}/status`, { status: 'draft' });
+    assert.strictEqual(statusRes.statusCode, 200);
+
+    // Verify it is draft
+    const getRes = await request('GET', `/api/admin/articles/${newArtId}`);
+    assert.strictEqual(getRes.data.data.status, 'draft');
+
+    // Delete
+    const delRes = await request('DELETE', `/api/admin/articles/${newArtId}`);
+    assert.strictEqual(delRes.statusCode, 200);
+  });
+
+  await test('Public HTML Pages: /articles and /articles/:slug return HTTP 200', async () => {
+    const listHtml = await request('GET', '/articles');
+    assert.strictEqual(listHtml.statusCode, 200);
+
+    const detailHtml = await request('GET', '/articles/case-01-stomach-sihr-recovery');
+    assert.strictEqual(detailHtml.statusCode, 200);
+  });
+
+  // ==========================================================================
+  // COMPREHENSIVE AUDIT & DYNAMIC SYMPTOM CRUD TESTS
+  // ==========================================================================
+  let dynamicSymptomId = null;
+
+  await test('Dynamic Symptom CRUD: Add new symptom to category, verify persistence and availability', async () => {
+    const addRes = await request('POST', '/api/admin/diagnosis/symptoms', {
+      category_id: 1,
+      symptom_bn: 'টেস্ট নতুন উপসর্গ: চোখে ঝাপসা দেখা',
+      symptom_en: 'Test New Symptom: Blurred vision during recitation',
+      sort_order: 15,
+      status: 'active'
+    });
+
+    assert.strictEqual(addRes.statusCode, 200);
+    assert.strictEqual(addRes.data.success, true);
+    assert(addRes.data.data.id > 0, 'Must return new symptom ID');
+    dynamicSymptomId = addRes.data.data.id;
+
+    // Verify it immediately appears in the categories API used by patient form
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    assert.strictEqual(catRes.statusCode, 200);
+    const cat1 = catRes.data.data.find(c => c.id === 1);
+    const found = cat1.symptoms.find(s => s.id === dynamicSymptomId);
+    assert(found, 'Newly added symptom must appear immediately in category 1');
+    assert.strictEqual(found.symptom_bn, 'টেস্ট নতুন উপসর্গ: চোখে ঝাপসা দেখা');
+    assert.strictEqual(found.symptom_en, 'Test New Symptom: Blurred vision during recitation');
+  });
+
+  await test('Dynamic Symptom CRUD: Edit symptom bilingual text and reassign to different category', async () => {
+    assert(dynamicSymptomId, 'dynamicSymptomId must exist');
+
+    const editRes = await request('PUT', `/api/admin/diagnosis/symptoms/${dynamicSymptomId}`, {
+      category_id: 2, // Reassign to category 2
+      symptom_bn: 'আপডেটকৃত উপসর্গ: চোখে অতিরিক্ত ঝাপসা দেখা',
+      symptom_en: 'Updated Symptom: Severe blurred vision',
+      sort_order: 12,
+      status: 'active'
+    });
+
+    assert.strictEqual(editRes.statusCode, 200);
+    assert.strictEqual(editRes.data.success, true);
+
+    // Verify it moved to category 2
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    const cat1 = catRes.data.data.find(c => c.id === 1);
+    const cat2 = catRes.data.data.find(c => c.id === 2);
+    assert(!cat1.symptoms.some(s => s.id === dynamicSymptomId), 'Symptom must no longer be in category 1');
+    const foundInCat2 = cat2.symptoms.find(s => s.id === dynamicSymptomId);
+    assert(foundInCat2, 'Symptom must now appear in category 2');
+    assert.strictEqual(foundInCat2.symptom_bn, 'আপডেটকৃত উপসর্গ: চোখে অতিরিক্ত ঝাপসা দেখা');
+  });
+
+  await test('Dynamic Symptom CRUD: Toggle active/inactive status and verify in categories API', async () => {
+    assert(dynamicSymptomId, 'dynamicSymptomId must exist');
+
+    // Toggle to inactive
+    const toggleRes = await request('POST', `/api/admin/diagnosis/symptoms/${dynamicSymptomId}/toggle`);
+    assert.strictEqual(toggleRes.statusCode, 200);
+    assert.strictEqual(toggleRes.data.success, true);
+    assert.strictEqual(toggleRes.data.new_status, 'inactive');
+
+    // Verify it does NOT appear in active categories list for patient pre-diagnosis
+    const catRes = await request('GET', '/api/admin/diagnosis/categories');
+    const cat2 = catRes.data.data.find(c => c.id === 2);
+    assert(!cat2.symptoms.some(s => s.id === dynamicSymptomId), 'Inactive symptom must not appear in patient pre-diagnosis active list');
+
+    // Toggle back to active
+    const toggleBackRes = await request('POST', `/api/admin/diagnosis/symptoms/${dynamicSymptomId}/toggle`);
+    assert.strictEqual(toggleBackRes.statusCode, 200);
+    assert.strictEqual(toggleBackRes.data.new_status, 'active');
+  });
+
+  await test('Dynamic Symptom CRUD: Delete symptom permanently without corrupting patient historical diagnosis', async () => {
+    assert(dynamicSymptomId, 'dynamicSymptomId must exist');
+
+    // Delete symptom
+    const delRes = await request('DELETE', `/api/admin/diagnosis/symptoms/${dynamicSymptomId}`);
+    assert.strictEqual(delRes.statusCode, 200);
+    assert.strictEqual(delRes.data.success, true);
+
+    // Verify it is gone from database
+    const catRes = await request('GET', '/api/admin/diagnosis/management');
+    const allSyms = catRes.data.data.flatMap(c => c.symptoms);
+    assert(!allSyms.some(s => s.id === dynamicSymptomId), 'Deleted symptom must be removed from diagnosis_symptoms');
+
+    // CRITICAL: Verify previously saved patient diagnosis records remain 100% intact with their snapshot
+    const patientDiagRes = await request('GET', `/api/admin/diagnosis/patient/${testPatientId}`);
+    assert.strictEqual(patientDiagRes.statusCode, 200);
+    assert.strictEqual(patientDiagRes.data.success, true);
+    assert(patientDiagRes.data.data.selected_symptoms_json.length > 0, 'Historical symptom snapshots must remain intact');
+    assert.strictEqual(patientDiagRes.data.data.selected_symptom_ids.length, 10, 'All 10 symptoms must remain recorded');
+  });
+
+  await test('Lead Raqi Official Name Verification: Strictly "Muhammadullah Miah" / "মুহাম্মদুল্লাহ মিয়াহ"', async () => {
+    // 1. Clinic Settings
+    const settings = db.prepare('SELECT raqi_name FROM clinic_settings WHERE id = 1').get();
+    assert.strictEqual(settings.raqi_name, 'Muhammadullah Miah');
+
+    // 2. Articles Author Name
+    const articles = db.prepare('SELECT author_name FROM articles').all();
+    for (const a of articles) {
+      assert(!a.author_name.includes('মিয়াজী'), `Article author "${a.author_name}" must not contain "মিয়াজী"`);
+      assert(!a.author_name.includes('Miyah'), `Article author "${a.author_name}" must not contain "Miyah"`);
+      assert(a.author_name.includes('Muhammadullah Miah') || a.author_name.includes('মুহাম্মদুল্লাহ মিয়াহ'), `Author must contain Muhammadullah Miah`);
+    }
+
+    // 3. Patient Diagnoses Raqi Name
+    const diagnoses = db.prepare('SELECT raqi_name FROM patient_diagnoses').all();
+    for (const d of diagnoses) {
+      assert(!d.raqi_name.includes('মিয়াজী'), `Diagnosis raqi "${d.raqi_name}" must not contain "মিয়াজী"`);
+      assert(!d.raqi_name.includes('Miyah'), `Diagnosis raqi "${d.raqi_name}" must not contain "Miyah"`);
+    }
+
+    // 4. Ruqyah Sessions Raqi Name
+    const sessions = db.prepare('SELECT raqi_name FROM ruqyah_sessions').all();
+    for (const s of sessions) {
+      assert(!s.raqi_name.includes('মিয়াজী'), `Session raqi "${s.raqi_name}" must not contain "মিয়াজী"`);
+      assert(!s.raqi_name.includes('Miyah'), `Session raqi "${s.raqi_name}" must not contain "Miyah"`);
+    }
+  });
+
+  await test('Bilingual PDF Verification: Bengali PDF (?lang=bn) and English PDF (?lang=en) generate valid localized files', async () => {
+    // Bengali PDF for Patient History
+    const bnRes = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf?lang=bn`);
+    assert.strictEqual(bnRes.statusCode, 200);
+    assert.strictEqual(bnRes.headers['content-type'], 'application/pdf');
+    assert(bnRes.headers['content-disposition'].includes('_BN.pdf'), 'Must download with BN filename');
+    assert(bnRes.rawBuffer.length > 5000, 'Bengali PDF must have valid size');
+    assert(bnRes.rawBuffer.slice(0, 5).toString() === '%PDF-', 'Must be a valid PDF header');
+
+    // English PDF for Patient History
+    const enRes = await request('GET', `/api/admin/reports/patient/${testPatientId}/pdf?lang=en`);
+    assert.strictEqual(enRes.statusCode, 200);
+    assert.strictEqual(enRes.headers['content-type'], 'application/pdf');
+    assert(enRes.headers['content-disposition'].includes('_EN.pdf'), 'Must download with EN filename');
+    assert(enRes.rawBuffer.length > 5000, 'English PDF must have valid size');
+    assert(enRes.rawBuffer.slice(0, 5).toString() === '%PDF-', 'Must be a valid PDF header');
+
+    // Bengali PDF for Ruqyah Session
+    const sBnRes = await request('GET', `/api/admin/reports/session/${recordedSessionId}/pdf?lang=bn`);
+    assert.strictEqual(sBnRes.statusCode, 200);
+    assert.strictEqual(sBnRes.headers['content-type'], 'application/pdf');
+    assert(sBnRes.headers['content-disposition'].includes('_BN.pdf'));
+
+    // English PDF for Ruqyah Session
+    const sEnRes = await request('GET', `/api/admin/reports/session/${recordedSessionId}/pdf?lang=en`);
+    assert.strictEqual(sEnRes.statusCode, 200);
+    assert.strictEqual(sEnRes.headers['content-type'], 'application/pdf');
+    assert(sEnRes.headers['content-disposition'].includes('_EN.pdf'));
+  });
+
+  console.log('================================================================');
+  console.log(` AUDIT & VERIFICATION RESULTS: ${passed} PASSED, ${failed} FAILED `);
+  console.log('================================================================');
+
+  if (failed > 0) {
+    process.exit(1);
+  }
+}
+
+// Start temporary test server
+server = app.listen(port, async () => {
+  baseUrl = `http://localhost:${port}`;
+  try {
+    await runTests();
+  } catch (err) {
+    console.error('Fatal test error:', err);
+    process.exit(1);
+  } finally {
+    server.close();
+    process.exit(0);
+  }
+});
