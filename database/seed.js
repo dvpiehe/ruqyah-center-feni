@@ -347,12 +347,12 @@ function seed() {
     console.log('Seeded sample patients, appointments, sessions, and follow-ups.');
   }
 
-  // Run Migration V3 (Diagnosis Categories & Symptoms)
+  // Run Diagnosis Structure Migrations (V5 & V6)
   try {
-    const { runMigration: runV3 } = require('./migrate_v3_diagnosis');
-    runV3();
+    require('./migrate_v5_prediagnosis');
+    require('./migrate_v6_ruqyah_session_update');
   } catch (err) {
-    console.error('Migration V3 in seed error:', err.message);
+    console.error('Migration error in seed:', err.message);
   }
 
   console.log('Database initialization and seeding completed successfully!');
