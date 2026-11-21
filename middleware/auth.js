@@ -12,8 +12,13 @@ function requireAdmin(req, res, next) {
       token = req.headers.authorization.split(' ')[1];
     }
 
+    const isApi = (req.originalUrl && req.originalUrl.startsWith('/api/')) ||
+                  (req.baseUrl && req.baseUrl.startsWith('/api/')) ||
+                  req.xhr ||
+                  (req.headers.accept && req.headers.accept.includes('application/json'));
+
     if (!token) {
-      if (req.xhr || req.headers.accept?.includes('application/json') || req.path.startsWith('/api/')) {
+      if (isApi) {
         return res.status(401).json({ success: false, error: 'Authentication required. Please login.' });
       }
       return res.redirect('/admin/login');
@@ -25,7 +30,7 @@ function requireAdmin(req, res, next) {
     const admin = db.prepare('SELECT id, username, name, email, role FROM administrators WHERE id = ?').get(decoded.id);
     if (!admin) {
       res.clearCookie('ruqyah_admin_token');
-      if (req.path.startsWith('/api/')) {
+      if (isApi) {
         return res.status(401).json({ success: false, error: 'Invalid session. Admin account not found.' });
       }
       return res.redirect('/admin/login');
@@ -35,7 +40,11 @@ function requireAdmin(req, res, next) {
     next();
   } catch (err) {
     res.clearCookie('ruqyah_admin_token');
-    if (req.path.startsWith('/api/')) {
+    const isApi = (req.originalUrl && req.originalUrl.startsWith('/api/')) ||
+                  (req.baseUrl && req.baseUrl.startsWith('/api/')) ||
+                  req.xhr ||
+                  (req.headers.accept && req.headers.accept.includes('application/json'));
+    if (isApi) {
       return res.status(401).json({ success: false, error: 'Session expired or invalid. Please login again.' });
     }
     return res.redirect('/admin/login');
