@@ -1,25 +1,99 @@
 /**
  * Ruqyah Support & Cupping Center - Main Client Application Script
+ * Mobile Navigation Drawer, Accordions, Toasts, and UX Enhancements
  */
 
-// Mobile navigation toggle
 document.addEventListener('DOMContentLoaded', () => {
+  // --- Mobile Navigation Drawer System ---
   const toggleBtn = document.querySelector('.mobile-toggle');
-  const navMenu = document.querySelector('.nav-menu');
+  const drawer = document.querySelector('.mobile-drawer');
+  const backdrop = document.querySelector('.drawer-backdrop');
+  const closeBtn = document.querySelector('.drawer-close-btn');
 
-  if (toggleBtn && navMenu) {
-    toggleBtn.addEventListener('click', () => {
-      navMenu.classList.toggle('open');
-      const isOpen = navMenu.classList.contains('open');
-      toggleBtn.setAttribute('aria-expanded', isOpen);
+  function openDrawer() {
+    if (drawer) {
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+    }
+    if (backdrop) {
+      backdrop.classList.add('active');
+    }
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  }
+
+  function closeDrawer() {
+    if (drawer) {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+    }
+    if (backdrop) {
+      backdrop.classList.remove('active');
+    }
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+    document.body.style.overflow = '';
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (drawer && drawer.classList.contains('open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
     });
   }
 
-  // FAQ Accordion
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeDrawer);
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', closeDrawer);
+  }
+
+  // Auto-close drawer when clicking on any navigation link inside it
+  document.querySelectorAll('.drawer-nav-link, .drawer-actions a').forEach(link => {
+    link.addEventListener('click', closeDrawer);
+  });
+
+  // Close drawer on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer && drawer.classList.contains('open')) {
+      closeDrawer();
+    }
+  });
+
+  // --- Admin Sidebar Mobile Toggle ---
+  const adminSidebarToggle = document.querySelector('.admin-sidebar-toggle');
+  const adminSidebar = document.querySelector('.admin-sidebar');
+  if (adminSidebarToggle && adminSidebar) {
+    adminSidebarToggle.addEventListener('click', () => {
+      adminSidebar.classList.toggle('open');
+    });
+
+    // Close admin sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 992 &&
+          adminSidebar.classList.contains('open') &&
+          !adminSidebar.contains(e.target) &&
+          !adminSidebarToggle.contains(e.target)) {
+        adminSidebar.classList.remove('open');
+      }
+    });
+  }
+
+  // --- FAQ Accordion ---
   const faqQuestions = document.querySelectorAll('.faq-question');
   faqQuestions.forEach(btn => {
     btn.addEventListener('click', () => {
       const parent = btn.closest('.faq-item');
+      if (!parent) return;
       const wasActive = parent.classList.contains('active');
       
       // Close all other items
@@ -31,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Contact Form Submission
+  // --- Public Contact Form Submission ---
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
@@ -39,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = contactForm.querySelector('button[type="submit"]');
       const originalText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'Sending...';
+      btn.innerHTML = 'পাঠানো হচ্ছে...';
 
       const payload = {
         name: document.getElementById('contactName')?.value,
@@ -56,13 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(data.message, 'success');
+          showToast(data.message || 'আপনার বার্তা সফলভাবে গৃহীত হয়েছে।', 'success');
           contactForm.reset();
         } else {
-          showToast(data.error || 'Failed to send message.', 'error');
+          showToast(data.error || 'বার্তা পাঠানো সম্ভব হয়নি।', 'error');
         }
       } catch (err) {
-        showToast('Connection error. Please try again or WhatsApp us directly.', 'error');
+        showToast('সংযোগ সমস্যা। সরাসরি হোয়াটসঅ্যাপে মেসেজ দিন।', 'error');
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -79,6 +153,7 @@ function showToast(message, type = 'info') {
   if (!container) {
     container = document.createElement('div');
     container.className = 'toast-container';
+    container.setAttribute('aria-live', 'polite');
     document.body.appendChild(container);
   }
 
@@ -90,17 +165,17 @@ function showToast(message, type = 'info') {
   if (type === 'error') icon = '✕';
 
   toast.innerHTML = `
-    <span style="font-weight: bold; font-size: 1.1rem;">${icon}</span>
+    <span style="font-weight: 700; font-size: 1.15rem; line-height: 1;">${icon}</span>
     <span>${message}</span>
   `;
 
   container.appendChild(toast);
 
   setTimeout(() => {
-    toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    toast.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
     toast.style.opacity = '0';
     toast.style.transform = 'translateX(100%)';
-    setTimeout(() => toast.remove(), 400);
+    setTimeout(() => toast.remove(), 350);
   }, 4000);
 }
 

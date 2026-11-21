@@ -67,20 +67,27 @@ app.get('/admin/*', (req, res) => res.sendFile(path.join(__dirname, 'views', 'ad
 app.get('/reports/view/patient/:patient_id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'report-patient.html')));
 app.get('/reports/view/session/:session_id', (req, res) => res.sendFile(path.join(__dirname, 'views', 'report-session.html')));
 
+// Health check for hosting monitors and reverse proxies
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok', uptime: process.uptime() }));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled Application Error:', err);
   res.status(500).json({ success: false, error: 'An internal server error occurred.' });
 });
 
-// Start Server
-if (require.main === module) {
-  app.listen(PORT, () => {
+// Start Server - Always listen unless running unit/system test runner
+const isTestEnv = process.env.NODE_ENV === 'test' || (process.argv[1] && process.argv[1].endsWith('system.test.js'));
+
+if (!isTestEnv) {
+  const server = app.listen(PORT, () => {
+    const addr = server.address();
+    const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr ? addr.port : PORT}`;
     console.log(`=======================================================`);
     console.log(` Ruqyah Support & Cupping Center - Feni Branch`);
-    console.log(` Server running on http://localhost:${PORT}`);
-    console.log(` Public Booking:  http://localhost:${PORT}/book`);
-    console.log(` Admin Portal:    http://localhost:${PORT}/admin`);
+    console.log(` Server listening on ${bind}`);
+    console.log(` Public Booking:  /book`);
+    console.log(` Admin Portal:    /admin`);
     console.log(` Default Admin:   admin / Admin@12345`);
     console.log(`=======================================================`);
   });

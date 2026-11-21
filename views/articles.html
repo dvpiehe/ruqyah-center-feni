@@ -95,6 +95,43 @@
 </head>
 <body>
 
+  <!-- Mobile Drawer Backdrop & Menu -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-header">
+      <div class="drawer-brand">
+        <img src="/images/logo.png" alt="রুকইয়াহ সাপোর্ট সেন্টার লোগো" class="drawer-logo">
+        <div class="drawer-brand-text">
+          <span class="drawer-title">রুকইয়াহ সাপোর্ট সেন্টার</span>
+          <span class="drawer-subtitle">ফেনী শাখা • কুরআন ও সুন্নাহ সম্মত চিকিৎসা</span>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeMobileDrawer()" aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <ul class="drawer-nav-list">
+        <li><a href="/" class="drawer-nav-link"><span class="drawer-link-icon">🏠</span> <span data-i18n="nav_home">হোম</span></a></li>
+        <li><a href="/about" class="drawer-nav-link"><span class="drawer-link-icon">📖</span> <span data-i18n="nav_about">আমাদের সম্পর্কে</span></a></li>
+        <li><a href="/services" class="drawer-nav-link"><span class="drawer-link-icon">🩺</span> <span data-i18n="nav_services">সেবাসমূহ ও খরচ</span></a></li>
+        <li><a href="/book" class="drawer-nav-link"><span class="drawer-link-icon">📅</span> <span data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</span></a></li>
+        <li><a href="/lookup" class="drawer-nav-link"><span class="drawer-link-icon">🔍</span> <span data-i18n="nav_lookup">বুকিং যাচাই</span></a></li>
+        <li><a href="/articles" class="drawer-nav-link active"><span class="drawer-link-icon">📚</span> <span data-i18n="nav_articles">কেস হিস্ট্রি ও তথ্য</span></a></li>
+        <li><a href="/policies" class="drawer-nav-link"><span class="drawer-link-icon">⚖️</span> <span data-i18n="nav_policies">নিয়ম ও নীতিমালা</span></a></li>
+        <li><a href="/contact" class="drawer-nav-link"><span class="drawer-link-icon">📍</span> <span data-i18n="nav_contact">যোগাযোগ ও অবস্থান</span></a></li>
+      </ul>
+
+      <div class="drawer-quick-actions">
+        <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="btn btn-outline-whatsapp drawer-action-btn">
+          💬 হোয়াটসঅ্যাপে যোগাযোগ
+        </a>
+        <a href="/admin/login" class="btn btn-outline-light drawer-action-btn" style="color: var(--text-muted); border-color: var(--border-light);">
+          🔒 অ্যাডমিন পোর্টাল
+        </a>
+      </div>
+    </div>
+  </aside>
+
   <!-- Top Bar -->
   <div class="top-bar">
     <div class="container top-bar-inner">
@@ -122,7 +159,7 @@
       <a href="/" class="brand-logo">
         <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center Logo" style="height: 52px; width: auto; object-fit: contain;">
       </a>
-      <button class="mobile-toggle" aria-label="Toggle Navigation">☰</button>
+      <button class="mobile-toggle" aria-label="Toggle Navigation" onclick="openMobileDrawer()">☰</button>
       <nav>
         <ul class="nav-menu">
           <li><a href="/" class="nav-link" data-i18n="nav_home">হোম</a></li>
@@ -212,6 +249,24 @@
     </div>
   </section>
 
+  <!-- Mobile Bottom Sticky Quick Action Bar -->
+  <div class="mobile-bottom-bar" aria-label="Mobile quick actions">
+    <a href="/book" class="bottom-action-btn bottom-btn-book">
+      <span class="bottom-action-icon">📅</span>
+      <span>অ্যাপয়েন্টমেন্ট নিন</span>
+    </a>
+    <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="bottom-action-btn bottom-btn-whatsapp">
+      <span class="bottom-action-icon">💬</span>
+      <span>হোয়াটসঅ্যাপ</span>
+    </a>
+  </div>
+
+  <!-- Floating WhatsApp Contact Pill -->
+  <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" aria-label="Chat with Ruqyah Clinic on WhatsApp">
+    <span class="wa-icon">💬</span>
+    <span class="wa-text">পরামর্শ নিন</span>
+  </a>
+
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-grid">
@@ -255,7 +310,12 @@
     </div>
     <div class="footer-bottom">
       <div class="container text-center" style="text-align: center; font-size: 0.85rem; color: #64748B;">
-        © <span id="currentYear">2026</span> Ruqyah Support & Cupping Center – Feni Branch. All Rights Reserved.
+        <div data-i18n="footer_rights">© ২০২৬ রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা। সর্বস্বত্ব সংরক্ষিত।</div>
+        <div class="footer-dev-credit" style="margin-top: 6px;">
+          ওয়েবসাইট তৈরি ও পরিচালনায়: 
+          <a href="https://wa.me/8801719602492" target="_blank" rel="noopener noreferrer" style="color: #6EE7B7; text-decoration: underline; font-weight: 600;">@mzzrahman</a>
+          (01719-602492)
+        </div>
       </div>
     </div>
   </footer>

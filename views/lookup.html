@@ -26,6 +26,43 @@
 </head>
 <body>
 
+  <!-- Mobile Drawer Backdrop & Menu -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-header">
+      <div class="drawer-brand">
+        <img src="/images/logo.png" alt="রুকইয়াহ সাপোর্ট সেন্টার লোগো" class="drawer-logo">
+        <div class="drawer-brand-text">
+          <span class="drawer-title">রুকইয়াহ সাপোর্ট সেন্টার</span>
+          <span class="drawer-subtitle">ফেনী শাখা • কুরআন ও সুন্নাহ সম্মত চিকিৎসা</span>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeMobileDrawer()" aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <ul class="drawer-nav-list">
+        <li><a href="/" class="drawer-nav-link"><span class="drawer-link-icon">🏠</span> <span data-i18n="nav_home">হোম</span></a></li>
+        <li><a href="/about" class="drawer-nav-link"><span class="drawer-link-icon">📖</span> <span data-i18n="nav_about">আমাদের সম্পর্কে</span></a></li>
+        <li><a href="/services" class="drawer-nav-link"><span class="drawer-link-icon">🩺</span> <span data-i18n="nav_services">সেবাসমূহ ও খরচ</span></a></li>
+        <li><a href="/book" class="drawer-nav-link"><span class="drawer-link-icon">📅</span> <span data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</span></a></li>
+        <li><a href="/lookup" class="drawer-nav-link active"><span class="drawer-link-icon">🔍</span> <span data-i18n="nav_lookup">বুকিং যাচাই</span></a></li>
+        <li><a href="/articles" class="drawer-nav-link"><span class="drawer-link-icon">📚</span> <span data-i18n="nav_articles">কেস হিস্ট্রি ও তথ্য</span></a></li>
+        <li><a href="/policies" class="drawer-nav-link"><span class="drawer-link-icon">⚖️</span> <span data-i18n="nav_policies">নিয়ম ও নীতিমালা</span></a></li>
+        <li><a href="/contact" class="drawer-nav-link"><span class="drawer-link-icon">📍</span> <span data-i18n="nav_contact">যোগাযোগ ও অবস্থান</span></a></li>
+      </ul>
+
+      <div class="drawer-quick-actions">
+        <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="btn btn-outline-whatsapp drawer-action-btn">
+          💬 হোয়াটসঅ্যাপে যোগাযোগ
+        </a>
+        <a href="/admin/login" class="btn btn-outline-light drawer-action-btn" style="color: var(--text-muted); border-color: var(--border-light);">
+          🔒 অ্যাডমিন পোর্টাল
+        </a>
+      </div>
+    </div>
+  </aside>
+
   <!-- Top Bar -->
   <div class="top-bar">
     <div class="container top-bar-inner">
@@ -37,7 +74,6 @@
         <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" data-i18n="topbar_whatsapp">হোয়াটসঅ্যাপ সহায়তা</a>
         <a href="/lookup" data-i18n="topbar_lookup">বুকিং স্ট্যাটাস দেখুন</a>
         <a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন প্যানেল</a>
-        <!-- Language Switcher in Top Bar -->
         <div style="display: inline-flex; align-items: center; gap: 4px; margin-left: 0.5rem; background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 4px;">
           <button type="button" class="lang-switcher-btn lang-btn-bn active" onclick="setLanguage('bn')">বাংলা</button>
           <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">|</span>
@@ -53,7 +89,7 @@
       <a href="/" class="brand-logo">
         <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center Logo" style="height: 52px; width: auto; object-fit: contain;">
       </a>
-      <button class="mobile-toggle" aria-label="Toggle Navigation">☰</button>
+      <button class="mobile-toggle" aria-label="Toggle Navigation" onclick="openMobileDrawer()">☰</button>
       <nav>
         <ul class="nav-menu">
           <li><a href="/" class="nav-link" data-i18n="nav_home">হোম</a></li>
@@ -77,11 +113,11 @@
   </header>
 
   <!-- Page Header -->
-  <section style="background-color: var(--primary); color: #FFFFFF; padding: 3.5rem 0 4rem;">
+  <section style="background-color: var(--primary); color: #FFFFFF; padding: 2.5rem 1rem 3rem;">
     <div class="container text-center" style="text-align: center;">
       <span class="badge badge-gold" style="margin-bottom: 0.75rem;" data-i18n="lookup_badge">বুকিং স্ট্যাটাস অনুসন্ধান</span>
-      <h1 style="color: #FFFFFF; font-size: 2.35rem; margin-bottom: 0.75rem;" data-i18n="lookup_main_title">আপনার বুকিংয়ের তথ্য ও স্ট্যাটাস যাচাই করুন</h1>
-      <p style="color: #E2E8F0; font-size: 1.1rem; max-width: 650px; margin: 0 auto;" data-i18n="lookup_main_desc">
+      <h1 style="color: #FFFFFF; font-size: clamp(1.5rem, 4vw, 2.35rem); margin-bottom: 0.75rem;" data-i18n="lookup_main_title">আপনার বুকিংয়ের তথ্য ও স্ট্যাটাস যাচাই করুন</h1>
+      <p style="color: #E2E8F0; font-size: clamp(0.95rem, 2.5vw, 1.1rem); max-width: 650px; margin: 0 auto;" data-i18n="lookup_main_desc">
         আপনার অ্যাপয়েন্টমেন্ট রেফারেন্স আইডি (যেমন: APT-XXXXXX) অথবা বুকিংয়ে ব্যবহৃত মোবাইল নম্বর দিয়ে খুঁজুন।
       </p>
     </div>
@@ -90,10 +126,10 @@
   <!-- Lookup Search Area -->
   <section class="section">
     <div class="container" style="max-width: 760px;">
-      <div class="card" style="padding: 2.25rem; margin-bottom: 2.5rem; box-shadow: var(--shadow-md);">
+      <div class="card" style="padding: clamp(1.25rem, 3vw, 2.25rem); margin-bottom: 2.5rem; box-shadow: var(--shadow-md);">
         <form id="lookupForm" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <input type="text" id="lookupInput" class="form-control" style="flex: 1; min-width: 250px;" data-i18n-placeholder="lookup_input_placeholder" placeholder="APT-XXXXXX অথবা ০১XXXXXXXXX লিখুন" required>
-          <button type="submit" class="btn btn-primary" style="flex-shrink: 0;" data-i18n="lookup_search_btn">অনুসন্ধান করুন</button>
+          <input type="text" id="lookupInput" class="form-control" style="flex: 1; min-width: 240px;" data-i18n-placeholder="lookup_input_placeholder" placeholder="APT-XXXXXX অথবা ০১XXXXXXXXX লিখুন" required>
+          <button type="submit" class="btn btn-primary" style="flex-shrink: 0; min-width: 140px;" data-i18n="lookup_search_btn">অনুসন্ধান করুন</button>
         </form>
       </div>
 
@@ -111,6 +147,24 @@
     </div>
   </section>
 
+  <!-- Mobile Bottom Sticky Quick Action Bar -->
+  <div class="mobile-bottom-bar" aria-label="Mobile quick actions">
+    <a href="/book" class="bottom-action-btn bottom-btn-book">
+      <span class="bottom-action-icon">📅</span>
+      <span>অ্যাপয়েন্টমেন্ট নিন</span>
+    </a>
+    <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="bottom-action-btn bottom-btn-whatsapp">
+      <span class="bottom-action-icon">💬</span>
+      <span>হোয়াটসঅ্যাপ</span>
+    </a>
+  </div>
+
+  <!-- Floating WhatsApp Contact Pill -->
+  <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" aria-label="Chat with Ruqyah Clinic on WhatsApp">
+    <span class="wa-icon">💬</span>
+    <span class="wa-text">পরামর্শ নিন</span>
+  </a>
+
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
@@ -119,38 +173,43 @@
           <div style="display: inline-flex; align-items: center; background: #ffffff; padding: 6px 14px; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 3px 10px rgba(0,0,0,0.15);">
             <img src="/images/logo.png" alt="Ruqyah Support & Cupping Center" style="height: 44px; width: auto; object-fit: contain;">
           </div>
-          <p>
-            Ruqyah Support & Cupping Center (Feni Branch) provides authentic Shariah-based Ruqyah and prophetic Hijama cupping therapy based on the Holy Qur'an and authentic Sunnah.
+          <p data-i18n="site_tagline">
+            কুরআন ও সহীহ সুন্নাহ ভিত্তিক নির্ভরযোগ্য চিকিৎসা। অভিজ্ঞ রাক্বী মুহাম্মদুল্লাহ মিয়াহর প্রত্যক্ষ তত্ত্বাবধানে ফেনী শাখা পরিচালিত।
           </p>
         </div>
         <div>
-          <h4 class="footer-title">Quick Links</h4>
+          <h4 class="footer-title">দ্রুত লিংক</h4>
           <ul class="footer-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/services">Services & Pricing</a></li>
-            <li><a href="/policies">Rules & Policies</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li><a href="/" data-i18n="nav_home">হোম</a></li>
+            <li><a href="/about" data-i18n="nav_about">আমাদের সম্পর্কে</a></li>
+            <li><a href="/services" data-i18n="nav_services">সেবাসমূহ ও খরচ</a></li>
+            <li><a href="/policies" data-i18n="nav_policies">নিয়ম ও নীতিমালা</a></li>
+            <li><a href="/contact" data-i18n="nav_contact">যোগাযোগ</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="footer-title">Patient Portal</h4>
+          <h4 class="footer-title">রোগী কর্নার</h4>
           <ul class="footer-links">
-            <li><a href="/book">Book Appointment</a></li>
-            <li><a href="/lookup">Check Booking Status</a></li>
-            <li><a href="/admin/login">Admin Dashboard</a></li>
+            <li><a href="/book" data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</a></li>
+            <li><a href="/lookup" data-i18n="nav_lookup">বুকিং স্ট্যাটাস দেখুন</a></li>
+            <li><a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন প্যানেল</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="footer-title">Clinic Address</h4>
+          <h4 class="footer-title">ক্লিনিক ঠিকানা</h4>
           <p style="font-size: 0.9rem; line-height: 1.7;">
-            Bhuya Mansion, Adarsha Housing Society, Mohipal, Feni.<br>
-            <strong>Phone / WhatsApp:</strong> 01758-354920
+            ভুঁইয়া ম্যানশন, আদর্শ হাউজিং সোসাইটি, মহিপাল, ফেনী।<br>
+            <strong>ফোন / হোয়াটসঅ্যাপ:</strong> ০১৭৫৮-৩৫৪৯২০
           </p>
         </div>
       </div>
       <div class="footer-bottom">
-        <div>© 2026 Ruqyah Support & Cupping Center – Feni Branch.</div>
+        <div data-i18n="footer_rights">© ২০২৬ রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা। সর্বস্বত্ব সংরক্ষিত।</div>
+        <div class="footer-dev-credit">
+          ওয়েবসাইট তৈরি ও পরিচালনায়: 
+          <a href="https://wa.me/8801719602492" target="_blank" rel="noopener noreferrer" style="color: #6EE7B7; text-decoration: underline; font-weight: 600;">@mzzrahman</a>
+          (01719-602492)
+        </div>
       </div>
     </div>
   </footer>

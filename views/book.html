@@ -41,7 +41,44 @@
     }
   </style>
 </head>
-<body>
+<body class="page-book">
+
+  <!-- Mobile Drawer Backdrop & Menu -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeMobileDrawer()"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-header">
+      <div class="drawer-brand">
+        <img src="/images/logo.png" alt="রুকইয়াহ সাপোর্ট সেন্টার লোগো" class="drawer-logo">
+        <div class="drawer-brand-text">
+          <span class="drawer-title">রুকইয়াহ সাপোর্ট সেন্টার</span>
+          <span class="drawer-subtitle">ফেনী শাখা • কুরআন ও সুন্নাহ সম্মত চিকিৎসা</span>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeMobileDrawer()" aria-label="Close menu">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <ul class="drawer-nav-list">
+        <li><a href="/" class="drawer-nav-link"><span class="drawer-link-icon">🏠</span> <span data-i18n="nav_home">হোম</span></a></li>
+        <li><a href="/about" class="drawer-nav-link"><span class="drawer-link-icon">📖</span> <span data-i18n="nav_about">আমাদের সম্পর্কে</span></a></li>
+        <li><a href="/services" class="drawer-nav-link"><span class="drawer-link-icon">🩺</span> <span data-i18n="nav_services">সেবাসমূহ ও খরচ</span></a></li>
+        <li><a href="/book" class="drawer-nav-link active"><span class="drawer-link-icon">📅</span> <span data-i18n="nav_book_btn">অ্যাপয়েন্টমেন্ট বুকিং</span></a></li>
+        <li><a href="/lookup" class="drawer-nav-link"><span class="drawer-link-icon">🔍</span> <span data-i18n="nav_lookup">বুকিং যাচাই</span></a></li>
+        <li><a href="/articles" class="drawer-nav-link"><span class="drawer-link-icon">📚</span> <span data-i18n="nav_articles">কেস হিস্ট্রি ও তথ্য</span></a></li>
+        <li><a href="/policies" class="drawer-nav-link"><span class="drawer-link-icon">⚖️</span> <span data-i18n="nav_policies">নিয়ম ও নীতিমালা</span></a></li>
+        <li><a href="/contact" class="drawer-nav-link"><span class="drawer-link-icon">📍</span> <span data-i18n="nav_contact">যোগাযোগ ও অবস্থান</span></a></li>
+      </ul>
+
+      <div class="drawer-quick-actions">
+        <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" class="btn btn-outline-whatsapp drawer-action-btn">
+          💬 হোয়াটসঅ্যাপে যোগাযোগ
+        </a>
+        <a href="/admin/login" class="btn btn-outline-light drawer-action-btn" style="color: var(--text-muted); border-color: var(--border-light);">
+          🔒 অ্যাডমিন পোর্টাল
+        </a>
+      </div>
+    </div>
+  </aside>
 
   <!-- Top Bar -->
   <div class="top-bar">
@@ -54,7 +91,6 @@
         <a href="https://wa.me/8801758354920" target="_blank" rel="noopener noreferrer" data-i18n="topbar_whatsapp">হোয়াটসঅ্যাপ সহায়তা</a>
         <a href="/lookup" data-i18n="topbar_lookup">বুকিং স্ট্যাটাস দেখুন</a>
         <a href="/admin/login" data-i18n="nav_admin">অ্যাডমিন প্যানেল</a>
-        <!-- Language Switcher in Top Bar -->
         <div style="display: inline-flex; align-items: center; gap: 4px; margin-left: 0.5rem; background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 4px;">
           <button type="button" class="lang-switcher-btn lang-btn-bn active" onclick="setLanguage('bn')">বাংলা</button>
           <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">|</span>
@@ -70,7 +106,7 @@
       <a href="/" class="brand-logo">
         <img src="/images/logo.png" alt="রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার লোগো" style="height: 52px; width: auto; object-fit: contain;">
       </a>
-      <button class="mobile-toggle" aria-label="Toggle Navigation">☰</button>
+      <button class="mobile-toggle" aria-label="Toggle Navigation" onclick="openMobileDrawer()">☰</button>
       <nav>
         <ul class="nav-menu">
           <li><a href="/" class="nav-link" data-i18n="nav_home">হোম</a></li>
@@ -84,7 +120,6 @@
       </nav>
       <div class="nav-actions" style="display: flex; align-items: center; gap: 0.5rem;">
         <a href="/lookup" class="btn btn-outline-primary btn-sm" data-i18n="topbar_lookup">বুকিং যাচাই</a>
-        <!-- Mobile/Desktop header language switcher -->
         <div style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-light); padding: 3px 6px; border-radius: 4px;">
           <button type="button" class="lang-btn-bn active" onclick="setLanguage('bn')" style="background: none; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--primary);">বাং</button>
           <span style="color: var(--text-muted); font-size: 0.75rem;">|</span>
@@ -95,11 +130,11 @@
   </header>
 
   <!-- Page Header -->
-  <section style="background-color: var(--primary); color: #FFFFFF; padding: 3rem 0 3.5rem;">
+  <section style="background-color: var(--primary); color: #FFFFFF; padding: 2.5rem 1rem 3rem;">
     <div class="container text-center" style="text-align: center;">
       <span class="badge badge-gold" style="margin-bottom: 0.75rem;" data-i18n="booking_step1">১ ঘণ্টার নির্ধারিত অ্যাপয়েন্টমেন্ট বুকিং</span>
-      <h1 style="color: #FFFFFF; font-size: 2.2rem; margin-bottom: 0.75rem;" data-i18n="booking_title">১ ঘণ্টার নির্ধারিত অ্যাপয়েন্টমেন্ট বুকিং</h1>
-      <p style="color: #E2E8F0; font-size: 1.05rem; max-width: 720px; margin: 0 auto;" data-i18n="booking_subtitle">
+      <h1 style="color: #FFFFFF; font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 0.75rem;" data-i18n="booking_title">১ ঘণ্টার নির্ধারিত অ্যাপয়েন্টমেন্ট বুকিং</h1>
+      <p style="color: #E2E8F0; font-size: clamp(0.9rem, 2.5vw, 1.05rem); max-width: 720px; margin: 0 auto;" data-i18n="booking_subtitle">
         রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা। স্বয়ংক্রিয় অনলাইন বুকিং সিস্টেম। ডাবল বুকিং রোধে খালি স্লট স্বয়ংক্রিয়ভাবে আপডেট হয়।
       </p>
     </div>
@@ -115,10 +150,10 @@
       </div>
 
       <!-- Booking Form Card -->
-      <form id="bookingForm" class="card" style="padding: 2.5rem; box-shadow: var(--shadow-md);">
+      <form id="bookingForm" class="card" style="padding: clamp(1.25rem, 3vw, 2.5rem); box-shadow: var(--shadow-md);">
         
         <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; margin-bottom: 1.75rem;">
-          <h2 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 0.25rem;" data-i18n="booking_step1">
+          <h2 style="color: var(--primary); font-size: 1.35rem; margin-bottom: 0.25rem;" data-i18n="booking_step1">
             ধাপ ১: সেবা ও সাক্ষাতের তারিখ নির্বাচন
           </h2>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;" data-i18n="booking_step1_sub">
@@ -126,7 +161,7 @@
           </p>
         </div>
 
-        <!-- PRD REQUIREMENT 2, 3, 4: MANDATORY SERVICE SELECTION -->
+        <!-- PRD REQUIREMENT: MANDATORY SERVICE SELECTION -->
         <div class="form-group" style="margin-bottom: 2rem;">
           <label class="form-label" style="font-size: 1.15rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.25rem;" data-i18n="service_selection_heading">
             আপনি কোন সেবাটি নিতে চান? *
@@ -135,7 +170,7 @@
             অনুগ্রহ করে অগ্রসর হওয়ার পূর্বে আপনার কাঙ্ক্ষিত সেবাটি নির্বাচন করুন:
           </p>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;" id="serviceCardsContainer">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;" id="serviceCardsContainer">
             
             <!-- Choice 1: Ruqyah -->
             <label class="service-choice-card" id="cardRuqyah" style="padding: 1.25rem; display: block;">
@@ -177,8 +212,8 @@
           <div id="serviceSummaryBox" style="display: none;"></div>
         </div>
 
-        <!-- Date Picker & Patient Count -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <!-- Date Picker & Patient Count - Mobile Friendly Responsive Grid -->
+        <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label" for="appointmentDate" data-i18n="booking_date_label">অ্যাপয়েন্টমেন্টের তারিখ *</label>
             <input type="date" id="appointmentDate" class="form-control" required>
@@ -226,7 +261,7 @@
 
         <!-- Step 2: Patient Identification Details -->
         <div style="border-top: 1px solid var(--border-light); padding-top: 1.75rem; margin-top: 2.5rem; margin-bottom: 1.5rem;" id="patientDetailsHeader">
-          <h2 style="color: var(--primary); font-size: 1.4rem; margin-bottom: 0.25rem;" data-i18n="booking_step2">
+          <h2 style="color: var(--primary); font-size: 1.35rem; margin-bottom: 0.25rem;" data-i18n="booking_step2">
             ধাপ ২: রোগীর তথ্যাবলী ও যোগাযোগ
           </h2>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
@@ -239,7 +274,7 @@
           <input type="text" id="fullName" class="form-control" placeholder="যেমন: মো: তারিকুল ইসলাম" required data-i18n-placeholder="booking_name_label">
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label" for="mobileNumber" data-i18n="booking_phone_label">মোবাইল নম্বর (হোয়াটসঅ্যাপ নম্বর) *</label>
             <input type="tel" id="mobileNumber" class="form-control" placeholder="01XXXXXXXXX" required>
@@ -319,6 +354,11 @@
       </div>
       <div class="footer-bottom">
         <div data-i18n="footer_rights">© ২০২৬ রুকইয়াহ সাপোর্ট অ্যান্ড হিজামা সেন্টার – ফেনী শাখা। সর্বস্বত্ব সংরক্ষিত।</div>
+        <div class="footer-dev-credit">
+          ওয়েবসাইট তৈরি ও পরিচালনায়: 
+          <a href="https://wa.me/8801719602492" target="_blank" rel="noopener noreferrer" style="color: #6EE7B7; text-decoration: underline; font-weight: 600;">@mzzrahman</a>
+          (01719-602492)
+        </div>
       </div>
     </div>
   </footer>
